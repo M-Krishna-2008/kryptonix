@@ -1,0 +1,98 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --font-display: 'Chakra Petch', sans-serif;
+    --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background-color: #080B16;
+    color: #F3F5FC;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, .font-display {
+    font-family: var(--font-display);
+  }
+
+  .font-mono, .tabular-nums {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* Spacecraft fine coordinate grid & subtle starfield */
+.star-command-bg {
+  background-color: #080B16;
+  background-image:
+    radial-gradient(circle at 18% 22%, rgba(155, 124, 255, 0.08) 0%, transparent 38%),
+    radial-gradient(circle at 82% 14%, rgba(166, 255, 77, 0.05) 0%, transparent 32%),
+    radial-gradient(circle at 50% 85%, rgba(87, 221, 245, 0.05) 0%, transparent 40%),
+    linear-gradient(to right, rgba(146, 157, 183, 0.045) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(146, 157, 183, 0.045) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 100% 100%, 40px 40px, 40px 40px;
+}
+
+/* Radar sweep animation with reduced-motion respect */
+@keyframes radar-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes boot-scanline {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0.15;
+  }
+  50% {
+    opacity: 0.35;
+  }
+  100% {
+    transform: translateY(1000%);
+    opacity: 0.1;
+  }
+}
+
+.animate-radar-sweep {
+  animation: radar-spin 9s linear infinite;
+  transform-origin: center;
+}
+
+.animate-radar-slow {
+  animation: radar-spin 24s linear infinite reverse;
+  transform-origin: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-radar-sweep,
+  .animate-radar-slow,
+  .animate-pulse,
+  .animate-spin {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* Custom subtle scrollbars for mission logs */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #080B16;
+}
+::-webkit-scrollbar-thumb {
+  background: #1E2942;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #33436B;
+}
+

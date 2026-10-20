@@ -1,0 +1,6 @@
+{
+  "name": "KRYPTØNIX — Star Command Operations Centre",
+  "description": "Private aerospace-inspired competition management command centre for the KRYPTØNIX student technology team to track missions, deadlines, submissions, and progress documents.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
