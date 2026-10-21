@@ -2,6 +2,21 @@ import { TeamMember } from '../types/mission';
 
 export const TEAM_NAME = 'KRYPTØNIX';
 
+/**
+ * PERMANENT GOOGLE APPS SCRIPT WEB APP URL FOR GITHUB PAGES
+ *
+ * Paste your deployed Google Apps Script Web App URL (ending in /exec) below
+ * (or set VITE_GOOGLE_APPS_SCRIPT_URL in .env / GitHub Actions).
+ * Once set here and pushed to GitHub, every device opening your GitHub Pages link
+ * will connect to your Google Sheet automatically and ONLY ask for your Team PIN.
+ */
+export const DEFAULT_GOOGLE_APPS_SCRIPT_URL: string =
+  (
+    (import.meta as unknown as { env?: Record<string, string> })?.env
+      ?.VITE_GOOGLE_APPS_SCRIPT_URL ||
+    'https://script.google.com/macros/s/AKfycbxIgfxmGEK08P2VAt7RejpDqaCXat2ueq7l-VUhfHLBwYTSJ6h4PH4_heuefF02VAVJ/exec'
+  ).trim();
+
 export const OFFICIAL_TEAM_MEMBERS: readonly Omit<
   TeamMember,
   'role' | 'focusArea' | 'profileUrl'
@@ -43,7 +58,9 @@ export function getDefaultTeamRoster(): TeamMember[] {
  * Ensures the team roster always contains the 4 official KRYPTØNIX members
  * with their exact uppercase names while preserving any saved editable roles/links.
  */
-export function normalizeTeamRoster(stored?: Partial<TeamMember>[]): TeamMember[] {
+export function normalizeTeamRoster(
+  stored?: Partial<TeamMember>[]
+): TeamMember[] {
   const byId = new Map<string, Partial<TeamMember>>();
   const byName = new Map<string, Partial<TeamMember>>();
 
@@ -57,12 +74,11 @@ export function normalizeTeamRoster(stored?: Partial<TeamMember>[]): TeamMember[
   }
 
   return OFFICIAL_TEAM_MEMBERS.map((official) => {
-    const match =
-      byId.get(official.id) || byName.get(official.name);
+    const match = byId.get(official.id) || byName.get(official.name);
     return {
       id: official.id,
       slotLabel: official.slotLabel,
-      name: official.name, // Enforce exact official spelling
+      name: official.name,
       role: typeof match?.role === 'string' ? match.role.trim() : '',
       focusArea:
         typeof match?.focusArea === 'string' ? match.focusArea.trim() : '',

@@ -11,7 +11,11 @@ import {
   AlertTriangle,
   RefreshCw,
 } from 'lucide-react';
-import { OFFICIAL_TEAM_MEMBERS, TEAM_NAME } from '../config/teamConfig';
+import {
+  DEFAULT_GOOGLE_APPS_SCRIPT_URL,
+  OFFICIAL_TEAM_MEMBERS,
+  TEAM_NAME,
+} from '../config/teamConfig';
 import { StorageConfig } from '../types/mission';
 import {
   checkAuthStatus,
@@ -270,19 +274,21 @@ export const BootSequenceAndLogin: React.FC<BootSequenceAndLoginProps> = ({
             {TEAM_NAME}
           </span>
         </div>
-        <button
-          type="button"
-          onClick={() => setShowUplinkSetup((prev) => !prev)}
-          className="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-medium text-[#F3F5FC] bg-[#151D32] hover:bg-[#1E2942] border border-[#929DB7]/25 rounded-md transition-colors whitespace-nowrap shrink-0 cursor-pointer"
-        >
-          <Settings className="w-3.5 h-3.5 text-[#57DDF5]" />
-          <span>
-            Backend:{' '}
-            {storageConfig.provider === 'apps_script'
-              ? 'Google Sheets Apps Script'
-              : 'Star Command API Server'}
-          </span>
-        </button>
+        {!DEFAULT_GOOGLE_APPS_SCRIPT_URL && (
+          <button
+            type="button"
+            onClick={() => setShowUplinkSetup((prev) => !prev)}
+            className="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-medium text-[#F3F5FC] bg-[#151D32] hover:bg-[#1E2942] border border-[#929DB7]/25 rounded-md transition-colors whitespace-nowrap shrink-0 cursor-pointer"
+          >
+            <Settings className="w-3.5 h-3.5 text-[#57DDF5]" />
+            <span>
+              Backend:{' '}
+              {storageConfig.provider === 'apps_script'
+                ? 'Google Sheets Apps Script'
+                : 'Star Command API Server'}
+            </span>
+          </button>
+        )}
       </header>
 
       {/* Main Command Terminal Card */}

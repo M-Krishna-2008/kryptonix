@@ -1,4 +1,7 @@
-import { normalizeTeamRoster } from '../config/teamConfig';
+import {
+  DEFAULT_GOOGLE_APPS_SCRIPT_URL,
+  normalizeTeamRoster,
+} from '../config/teamConfig';
 import {
   ActivityEvent,
   AuthStatusResponse,
@@ -22,38 +25,52 @@ const API_BASE =
   ) || '';
 
 export function getStorageConfig(): StorageConfig {
-  const envAppsScriptUrl =
-    (
-      import.meta.env.VITE_GOOGLE_APPS_SCRIPT_URL as string | undefined
-    )?.trim() || '';
+  const fixedUrl = DEFAULT_GOOGLE_APPS_SCRIPT_URL.trim();
+
+  // If a permanent Google Apps Script URL is configured in teamConfig.ts or VITE_GOOGLE_APPS_SCRIPT_URL,
+  // always lock to Google Sheets mode so users never have to enter the sheet link on any device.
+  if (fixedUrl) {
+    return {
+      provider: 'apps_script',
+      appsScriptUrl: fixedUrl,
+      lastSyncedAt: null,
+    };
+  }
+
+  const isGitHubPages =
+    typeof window !== 'undefined' &&
+    window.location.hostname.endsWith('github.io');
 
   try {
     const rawV2 = localStorage.getItem(STORAGE_KEYS.CONFIG_V2);
     if (rawV2) {
       const parsed = JSON.parse(rawV2) as Partial<StorageConfig>;
-      if (parsed.provider === 'apps_script' && parsed.appsScriptUrl) {
+      if (parsed.appsScriptUrl && parsed.appsScriptUrl.trim()) {
         return {
           provider: 'apps_script',
           appsScriptUrl: parsed.appsScriptUrl.trim(),
           lastSyncedAt: parsed.lastSyncedAt || null,
         };
       }
-      if (parsed.provider === 'express_api') {
+      if (parsed.provider === 'express_api' && !isGitHubPages) {
         return {
           provider: 'express_api',
-          appsScriptUrl: (parsed.appsScriptUrl || envAppsScriptUrl).trim(),
+          appsScriptUrl: '',
           lastSyncedAt: parsed.lastSyncedAt || null,
         };
       }
     }
 
-    // Migrate saved URL from v1 config if present
     const rawV1 = localStorage.getItem(STORAGE_KEYS.CONFIG_V1);
     if (rawV1) {
       const parsedV1 = JSON.parse(rawV1);
-      if (parsedV1 && typeof parsedV1.appsScriptUrl === 'string' && parsedV1.appsScriptUrl.trim()) {
+      if (
+        parsedV1 &&
+        typeof parsedV1.appsScriptUrl === 'string' &&
+        parsedV1.appsScriptUrl.trim()
+      ) {
         const migrated: StorageConfig = {
-          provider: parsedV1.mode === 'apps_script' ? 'apps_script' : 'express_api',
+          provider: 'apps_script',
           appsScriptUrl: parsedV1.appsScriptUrl.trim(),
           lastSyncedAt: parsedV1.lastSyncedAt || null,
         };
@@ -66,8 +83,8 @@ export function getStorageConfig(): StorageConfig {
   }
 
   return {
-    provider: envAppsScriptUrl ? 'apps_script' : 'express_api',
-    appsScriptUrl: envAppsScriptUrl,
+    provider: isGitHubPages ? 'apps_script' : 'express_api',
+    appsScriptUrl: '',
     lastSyncedAt: null,
   };
 }
