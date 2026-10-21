@@ -3,7 +3,6 @@ import {
   Eye,
   EyeOff,
   Lock,
-  ShieldCheck,
   Database,
   ArrowRight,
   Settings,
@@ -309,17 +308,14 @@ export const BootSequenceAndLogin: React.FC<BootSequenceAndLoginProps> = ({
             </p>
           </div>
 
-          {/* Security Architecture Status Box */}
-          <div className="mb-6 p-3.5 rounded-md bg-[#101629] border border-[#929DB7]/20 text-xs">
-            <div className="flex items-start gap-2.5">
-              <ShieldCheck className="w-4 h-4 text-[#A6FF4D] shrink-0 mt-0.5" />
-              <div className="text-[#929DB7] leading-relaxed">
-                <strong className="text-[#F3F5FC] font-semibold">
-                  Server-Side Hash Authentication:
-                </strong>{' '}
-                Your PIN is verified on the backend against a salted cryptographic hash and issues an expiring session token. Plaintext PINs are never stored.
-              </div>
-            </div>
+          {/* Star Command Terminal Visual (1:1 Square Frame) */}
+          <div className="mb-6 w-48 h-48 sm:w-56 sm:h-56 aspect-square mx-auto rounded-md overflow-hidden bg-[#101629] border border-[#929DB7]/30 flex items-center justify-center shadow-lg">
+            <img
+              src="https://file.garden/aHpR4b_Q5gZVMOAA/b50fcd410d5877642bff4d987086de38.gif"
+              alt="KRYPTØNIX Star Command Access Terminal"
+              referrerPolicy="no-referrer"
+              className="w-full h-full object-cover block"
+            />
           </div>
 
           {isCheckingServer && (
