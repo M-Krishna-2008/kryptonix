@@ -36,8 +36,7 @@ desktop.ini
 .vscode/
 .idea/
 
-# NEVER ignore model weights for this forensic module
-!models/
-!models/*.pt
+# Committed trained detector model
 !ai_cctv_detection/models/
-!ai_cctv_detection/models/*.pt
+!ai_cctv_detection/models/best.pt
+models/yolo11s-cls.pt

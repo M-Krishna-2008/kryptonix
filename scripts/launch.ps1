@@ -340,9 +340,23 @@ if ((-not (Test-Path -LiteralPath $DepsMarker)) -and (Test-Path -LiteralPath $Ro
             & $RootVenvPy -c "import fairseq" 2>$null
             if ($LASTEXITCODE -ne 0) {
                 Write-Log "Installing Windows-compatible Fairseq 0.12.2 binary..." "INFO"
-                & $RootVenvPy -m pip install "https://github.com/BlueAmulet/fairseq-win-whl/releases/download/v0.12.2/fairseq-0.12.2-cp310-cp310-win_amd64.whl" --quiet 2>$null
+                $fairseqWhlUrl = "https://huggingface.co/Jmica/rvc/resolve/01b388e059df1218a5a7b48b91305b2e06fed030/fairseq-0.12.2-cp310-cp310-win_amd64.whl"
+                $backupWhl = Join-Path $RootPath "..\PS05_backup_20261026\ai_aud\wheels\fairseq-0.12.2-cp310-cp310-win_amd64.whl"
+                
+                if (Test-Path -LiteralPath $backupWhl) {
+                    & $RootVenvPy -m pip install $backupWhl --quiet
+                } else {
+                    & $RootVenvPy -m pip install $fairseqWhlUrl --quiet
+                }
+                
+                & $RootVenvPy -c "import fairseq" 2>$null
+                if ($LASTEXITCODE -ne 0) {
+                    & $RootVenvPy -m pip install "fairseq==0.12.2" --quiet
+                }
             }
-        } catch {}
+        } catch {
+            Write-Log "Notice: Fairseq installation check encountered an issue: $_" "WARN"
+        }
 
         # Install root dependencies
         $reqLock = Join-Path $RootPath "requirements-lock.txt"
@@ -356,6 +370,20 @@ if ((-not (Test-Path -LiteralPath $DepsMarker)) -and (Test-Path -LiteralPath $Ro
         Write-Log "Consolidated dependencies verified and locked." "INFO"
     }
 } else {
+    # Self-healing check: verify Fairseq is present even if .deps_installed exists
+    if ((Test-Path -LiteralPath $RootVenvPy) -and (-not $DryRun)) {
+        & $RootVenvPy -c "import fairseq" 2>$null
+        if ($LASTEXITCODE -ne 0) {
+            Write-Log "Fairseq 0.12.2 missing in virtual environment. Auto-installing Windows binary..." "INFO"
+            $fairseqWhlUrl = "https://huggingface.co/Jmica/rvc/resolve/01b388e059df1218a5a7b48b91305b2e06fed030/fairseq-0.12.2-cp310-cp310-win_amd64.whl"
+            $backupWhl = Join-Path $RootPath "..\PS05_backup_20261026\ai_aud\wheels\fairseq-0.12.2-cp310-cp310-win_amd64.whl"
+            if (Test-Path -LiteralPath $backupWhl) {
+                & $RootVenvPy -m pip install $backupWhl --quiet
+            } else {
+                & $RootVenvPy -m pip install $fairseqWhlUrl --quiet
+            }
+        }
+    }
     Write-Log "Virtual environment and dependencies verified." "INFO"
 }
 
