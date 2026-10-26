@@ -69,7 +69,7 @@ def generate_visual_artifacts(
                     label="No Speech (Excluded)" if not shaded_nospeech_label else None,
                 )
                 shaded_nospeech_label = True
-            elif logit < low_thresh:
+            elif logit is not None and not (np.isnan(logit) or np.isinf(logit)) and logit < low_thresh:
                 ax.axvspan(
                     s_sec,
                     e_sec,
@@ -157,11 +157,12 @@ def generate_visual_artifacts(
     fig.patch.set_facecolor("#0f172a")
     ax.set_facecolor("#1e293b")
 
-    if len(logits) > 0 and len(window_meta) == len(logits):
+    valid_logits = [float(l) for l in logits if l is not None and not (np.isnan(l) or np.isinf(l))] if len(logits) > 0 else []
+    if len(valid_logits) > 0 and len(window_meta) == len(logits):
         w_centers = [(m["start_sec"] + m["end_sec"]) / 2.0 for m in window_meta]
 
-        sp_indices = [i for i, m in enumerate(window_meta) if m.get("has_speech", True)]
-        non_sp_indices = [i for i, m in enumerate(window_meta) if not m.get("has_speech", True)]
+        sp_indices = [i for i, m in enumerate(window_meta) if m.get("has_speech", True) and logits[i] is not None and not (np.isnan(logits[i]) or np.isinf(logits[i]))]
+        non_sp_indices = [i for i, m in enumerate(window_meta) if not m.get("has_speech", True) or logits[i] is None or np.isnan(logits[i]) or np.isinf(logits[i])]
 
         # Plot speech windows line and points
         if sp_indices:
@@ -172,8 +173,8 @@ def generate_visual_artifacts(
         # Plot greyed out non-speech windows
         if non_sp_indices:
             non_sp_centers = [w_centers[i] for i in non_sp_indices]
-            non_sp_logits = [logits[i] for i in non_sp_indices]
-            ax.scatter(non_sp_centers, non_sp_logits, color="#64748b", marker="x", s=35, zorder=4, label="No speech (excluded)")
+            non_sp_logits = [logits[i] if (logits[i] is not None and not np.isnan(logits[i])) else 0.0 for i in non_sp_indices]
+            ax.scatter(non_sp_centers, non_sp_logits, color="#64748b", marker="x", s=35, zorder=4, label="No speech / invalid (excluded)")
             for i in non_sp_indices:
                 meta = window_meta[i]
                 ax.axvspan(meta["start_sec"], meta["end_sec"], color="#334155", alpha=0.35)
@@ -185,11 +186,11 @@ def generate_visual_artifacts(
         # Uncertain band shading
         ax.axhspan(low_thresh, high_thresh, color="#f59e0b", alpha=0.15, label="Uncertain Band")
 
-        y_min = min(float(np.min(logits)) - 1.0, low_thresh - 1.5)
-        y_max = max(float(np.max(logits)) + 1.0, high_thresh + 1.5)
+        y_min = min(float(np.nanmin(valid_logits)) - 1.0, low_thresh - 1.5)
+        y_max = max(float(np.nanmax(valid_logits)) + 1.0, high_thresh + 1.5)
         ax.set_ylim(y_min, y_max)
     else:
-        ax.text(0.5, 0.5, "No model logits available (model not installed)", color="#94a3b8", ha="center")
+        ax.text(0.5, 0.5, "No model logits available", color="#94a3b8", ha="center")
         ax.set_ylim(-3, 3)
 
     ax.set_xlim(0, max(duration_sec, 0.1))

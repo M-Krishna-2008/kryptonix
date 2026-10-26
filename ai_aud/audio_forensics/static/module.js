@@ -82,6 +82,7 @@ function initModule(containerElementId) {
           <div class="audio_forensics-card">
             <div class="audio_forensics-card-title">W2V2-AASIST Bona-Fide Score</div>
             <div style="font-size: 1.25rem; font-weight: 700;" id="af-logit-display">0.00</div>
+            <div id="af-score-reason" style="display: none; font-size: 0.75rem; color: #f59e0b; margin-top: 0.25rem;"></div>
             <div class="audio_forensics-gauge-container">
               <div class="audio_forensics-gauge-bar">
                 <div class="audio_forensics-gauge-zone-synthetic" title="Synthetic speech zone (< -1.5)"></div>
@@ -107,6 +108,8 @@ function initModule(containerElementId) {
               <div><strong>File:</strong> <span id="af-meta-name">-</span></div>
               <div><strong>Size:</strong> <span id="af-meta-size">-</span></div>
               <div><strong>Duration:</strong> <span id="af-meta-dur">-</span></div>
+              <div><strong>Windows analysed:</strong> <span id="af-meta-windows">-</span></div>
+              <div><strong>Speech windows:</strong> <span id="af-meta-speech-windows">-</span></div>
               <div style="margin-top: 0.3rem;"><strong>SHA-256:</strong></div>
               <div style="font-family: monospace; font-size: 0.725rem; color: #94a3b8;" id="af-meta-sha">-</div>
             </div>
@@ -167,6 +170,12 @@ function initModule(containerElementId) {
             <!-- Dynamically populated -->
           </div>
         </div>
+
+        <!-- Collapsible Raw JSON Debug Panel -->
+        <details class="audio_forensics-card" style="margin-top: 1rem; cursor: pointer;">
+          <summary style="font-size: 0.85rem; font-weight: 600; color: #94a3b8; user-select: none;">Raw JSON Response</summary>
+          <pre id="af-raw-json" style="margin-top: 0.75rem; background: #0b1120; padding: 0.75rem; border-radius: 6px; font-size: 0.72rem; overflow-x: auto; max-height: 300px; color: #cbd5e1; font-family: monospace; white-space: pre-wrap; word-break: break-all;"></pre>
+        </details>
 
         <!-- Actions Footer -->
         <div class="audio_forensics-actions">
@@ -329,23 +338,37 @@ function initModule(containerElementId) {
     verdictBadge.className = `audio_forensics-verdict-badge audio_forensics-verdict-${verdict}`;
 
     // Confidence
-    const confPct = Math.round((res.overall_confidence || 0) * 100);
-    container.querySelector("#af-confidence-val").textContent = `${confPct}%`;
+    const confVal = res.overall_confidence;
+    const confDisplay = container.querySelector("#af-confidence-val");
+    if (confVal === null || confVal === undefined) {
+      confDisplay.textContent = "not available";
+    } else {
+      confDisplay.textContent = `${Math.round(confVal * 100)}%`;
+    }
 
     // Evidence Metadata
     container.querySelector("#af-meta-name").textContent = res.evidence_file?.name || "audio";
     const bytes = res.evidence_file?.size_bytes || 0;
     container.querySelector("#af-meta-size").textContent = bytes > 1048576 ? `${(bytes / 1048576).toFixed(2)} MB` : `${(bytes / 1024).toFixed(1)} KB`;
     container.querySelector("#af-meta-dur").textContent = `${res.raw_metrics?.audio_info?.duration_sec || 0} s`;
+    const validWins = res.raw_metrics?.valid_windows ?? res.raw_metrics?.windows_analyzed ?? 0;
+    const totalWins = res.raw_metrics?.total_windows ?? res.raw_metrics?.windows_analyzed ?? 0;
+    const speechWins = res.raw_metrics?.speech_windows ?? (res.raw_metrics?.per_window_logits ? res.raw_metrics.per_window_logits.filter(w => w.has_speech).length : 0);
+    const winEl = container.querySelector("#af-meta-windows");
+    if (winEl) winEl.textContent = `${validWins} / ${totalWins}`;
+    const spWinEl = container.querySelector("#af-meta-speech-windows");
+    if (spWinEl) spWinEl.textContent = `${speechWins}`;
     container.querySelector("#af-meta-sha").textContent = res.evidence_file?.sha256 || "N/A";
 
     // Logit Gauge
     const clipSummary = res.raw_metrics?.clip_summary || {};
-    const medianLogit = typeof clipSummary.median_logit === "number" ? clipSummary.median_logit : null;
+    const medianLogit = typeof clipSummary.median_logit === "number" ? clipSummary.median_logit : (typeof res.raw_metrics?.bona_fide_logit === "number" ? res.raw_metrics.bona_fide_logit : null);
     const logitDisplay = container.querySelector("#af-logit-display");
     const gaugeMarker = container.querySelector("#af-gauge-marker");
+    const scoreReasonEl = container.querySelector("#af-score-reason");
+    const scoreReason = res.score_unavailable_reason || res.raw_metrics?.score_unavailable_reason || "Score unavailable for this recording";
 
-    if (medianLogit !== null) {
+    if (medianLogit !== null && !isNaN(medianLogit)) {
       logitDisplay.textContent = `${medianLogit >= 0 ? "+" : ""}${medianLogit.toFixed(2)}`;
       logitDisplay.style.color = medianLogit >= 1.5 ? "var(--audio_forensics-ok)" : (medianLogit <= -1.5 ? "var(--audio_forensics-danger)" : "var(--audio_forensics-warn)");
 
@@ -354,10 +377,15 @@ function initModule(containerElementId) {
       const gaugePct = Math.round(((clamped + 3.0) / 6.0) * 100);
       gaugeMarker.style.left = `${gaugePct}%`;
       gaugeMarker.style.display = "block";
+      if (scoreReasonEl) scoreReasonEl.style.display = "none";
     } else {
       logitDisplay.textContent = "N/A";
       logitDisplay.style.color = "#94a3b8";
       gaugeMarker.style.display = "none";
+      if (scoreReasonEl) {
+        scoreReasonEl.textContent = scoreReason;
+        scoreReasonEl.style.display = "block";
+      }
     }
 
     // Codec Warning Banner
@@ -525,6 +553,12 @@ function initModule(containerElementId) {
 
         findingsList.appendChild(item);
       });
+    }
+
+    // Populate Raw JSON debug panel
+    const rawJsonEl = container.querySelector("#af-raw-json");
+    if (rawJsonEl) {
+      rawJsonEl.textContent = JSON.stringify(res, null, 2);
     }
   }
 

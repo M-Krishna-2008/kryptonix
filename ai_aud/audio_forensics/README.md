@@ -126,3 +126,22 @@ To calibrate the detection thresholds for your specific deployment acoustic doma
 .\.venv\Scripts\python.exe tools/calibrate.py data_audio/bonafide data_audio/spoof --save
 ```
 This computes the Equal Error Rate (EER), ROC-AUC, and operating points at 5% FAR / 5% FRR, updating `audio_forensics/configs/thresholds.yaml`.
+
+---
+
+## UI Data Contract Specification
+Both the standalone module UI (`module.js`) and the master platform frontend (`frontend/js/ui.js`) adhere to the following contract fields emitted by `POST /api/audio_forensics/analyze` and `analyze()`:
+
+| Field Path | Type | Description |
+|:---|:---|:---|
+| `verdict` | `string` | Final forensic verdict (`authentic`, `suspicious`, `inconclusive`, `likely_fake`). |
+| `overall_confidence` | `float \| null` | Model confidence in `[0.0, 1.0]`. If `null`, UI displays `"Confidence: not available"` (never defaults silently to 0%). |
+| `score_unavailable_reason` | `string \| null` | Human-readable explanation when acoustic score cannot be computed (e.g. silent recording, low speech). Displayed below score if null. |
+| `raw_metrics.clip_summary.median_logit` | `float \| null` | Median AASIST bona-fide logit across speech windows (or fallback across all windows if speech < 2). |
+| `raw_metrics.bona_fide_logit` | `float \| null` | Alias/fallback for clip-level bona-fide logit. |
+| `raw_metrics.valid_windows` | `int` | Count of successfully processed, finite numeric windows. |
+| `raw_metrics.invalid_windows` | `int` | Count of windows excluded due to non-finite logits (NaN/inf) or zero amplitude. |
+| `raw_metrics.speech_windows` | `int` | Count of windows passing the VAD speech fraction gate (&ge; 50%). |
+| `raw_metrics.total_windows` | `int` | Total 4.04s windows extracted from the audio with 50% overlap. |
+| `raw_metrics.windows_analyzed` | `int` | Preserved legacy field representing valid windows analyzed. |
+| `findings` | `array` | List of forensic findings (`check`, `severity`, `description`, `location`, `confidence`). Contains `low_speech_content` if speech windows < 2. |

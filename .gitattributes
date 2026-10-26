@@ -10,6 +10,7 @@
 *.bat text eol=crlf
 *.cmd text eol=crlf
 *.ps1 text eol=crlf
+README.txt text eol=crlf
 
 # Shell scripts must have LF line endings
 *.sh text eol=lf

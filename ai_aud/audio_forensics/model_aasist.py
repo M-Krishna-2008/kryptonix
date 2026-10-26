@@ -13,6 +13,7 @@ from .config import (
     AASIST_MODEL_PATH,
     SCORE_DIRECTION,
     BATCH_SIZE,
+    WINDOW_SAMPLES,
 )
 
 logger = logging.getLogger("audio_forensics.model")
@@ -503,6 +504,7 @@ def score_windows(
        (logits_array, error_message)
        Output shape: (N,) float32 array of bona-fide logits (index 1).
        Higher = authentic/genuine, Lower = spoofed/synthetic.
+       NaN is returned for invalid/all-zero windows or if inference yields NaN/inf.
     """
     if not windows:
         return np.zeros(0, dtype=np.float32), "No windows provided for scoring."
@@ -518,13 +520,37 @@ def score_windows(
         with torch.no_grad():
             for i in range(0, len(windows), batch_size):
                 batch_arrs = windows[i : i + batch_size]
+                
+                clean_arrs = []
+                zero_mask = []
+                for arr in batch_arrs:
+                    if arr is None or len(arr) == 0:
+                        zero_mask.append(True)
+                        clean_arrs.append(np.zeros(WINDOW_SAMPLES, dtype=np.float32) + 1e-7)
+                    elif np.max(np.abs(arr)) < 1e-7:
+                        # All-zero or negligible window: add epsilon to prevent division by zero in norm
+                        zero_mask.append(True)
+                        clean_arrs.append(arr.astype(np.float32) + 1e-7)
+                    else:
+                        zero_mask.append(False)
+                        clean_arrs.append(arr.astype(np.float32))
+
                 # Shape: (B, 64600)
-                batch_tensor = torch.from_numpy(np.stack(batch_arrs)).float().to(dev)
+                batch_tensor = torch.from_numpy(np.stack(clean_arrs)).float().to(dev)
                 # Output logits: (B, 2)
                 output = model(batch_tensor)
                 # Index 1 = bona-fide logit (higher = more real)
                 bona_fide_logits = output[:, 1].detach().cpu().numpy()
-                results.extend(bona_fide_logits.tolist())
+
+                for idx, logit_val in enumerate(bona_fide_logits):
+                    if zero_mask[idx]:
+                        results.append(float("nan"))
+                    else:
+                        val = float(logit_val)
+                        if np.isnan(val) or np.isinf(val):
+                            results.append(float("nan"))
+                        else:
+                            results.append(val)
 
         return np.array(results, dtype=np.float32), None
     except Exception as e:

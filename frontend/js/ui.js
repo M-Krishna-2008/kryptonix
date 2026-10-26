@@ -113,7 +113,10 @@ export class UIRenderer {
     if (!cardElement) return;
 
     const verdict = result.verdict || 'inconclusive';
-    const confidence = result.overall_confidence ?? 0;
+    const confidence = result.overall_confidence;
+    const confidenceText = (confidence === null || confidence === undefined)
+      ? 'Confidence: not available'
+      : `Confidence: ${(confidence * 100).toFixed(0)}%`;
     const rawMetrics = result.raw_metrics || {};
     const findings = result.findings || [];
     const sha256 = result.evidence_file?.sha256 || 'not available';
@@ -137,9 +140,13 @@ export class UIRenderer {
 
     if (moduleId === 'ai_aud') {
       // Audio: bona-fide logit (NEVER percentage!)
-      const logitVal = rawMetrics.clip_summary?.median_logit ?? rawMetrics.bona_fide_logit ?? 'N/A';
-      const durationSec = rawMetrics.audio_info?.duration_sec || 10.0;
-      const formattedLogit = typeof logitVal === 'number' ? (logitVal > 0 ? `+${logitVal.toFixed(3)}` : logitVal.toFixed(3)) : logitVal;
+      const logitVal = rawMetrics.clip_summary?.median_logit ?? rawMetrics.bona_fide_logit;
+      const hasNumericScore = typeof logitVal === 'number' && !isNaN(logitVal);
+      const formattedLogit = hasNumericScore ? (logitVal > 0 ? `+${logitVal.toFixed(3)}` : logitVal.toFixed(3)) : 'N/A';
+      const scoreReason = result.score_unavailable_reason || rawMetrics.score_unavailable_reason || (hasNumericScore ? '' : 'Score unavailable for this recording');
+      const validWindows = rawMetrics.valid_windows ?? rawMetrics.windows_analyzed ?? 0;
+      const totalWindows = rawMetrics.total_windows ?? rawMetrics.windows_analyzed ?? 0;
+      const speechWindows = rawMetrics.speech_windows ?? (rawMetrics.windows ? rawMetrics.windows.filter(w => w.speech_fraction >= 0.5).length : 0);
 
       moduleSpecificHtml = `
         <div class="audio-metric-container">
@@ -149,10 +156,12 @@ export class UIRenderer {
               <span class="has-tooltip" data-tooltip="Raw acoustic logit from AASIST backend. Higher positive values indicate genuine human speech. It is NOT a percentage or probability.">&#9432;</span>
             </div>
             <div class="metric-number">${formattedLogit}</div>
+            ${!hasNumericScore ? `<div class="metric-subnote" style="color: #f59e0b; font-weight: 500;">${scoreReason}</div>` : ''}
             <div class="metric-subnote">Thresholds: Authenticity cutoff &gt; +1.5 &bull; Spoof cutoff &lt; -3.7</div>
           </div>
-          <div style="text-align: right; font-size: 0.8rem; color: var(--text-muted);">
-            <div>Windows Analyzed: <strong>${rawMetrics.windows_analyzed || 'N/A'}</strong></div>
+          <div style="text-align: right; font-size: 0.8rem; color: var(--text-muted); line-height: 1.4;">
+            <div>Windows analysed: <strong>${validWindows} / ${totalWindows}</strong></div>
+            <div>Speech windows: <strong>${speechWindows}</strong></div>
             <div>Sample Rate: <strong>${rawMetrics.audio_info?.orig_sr ? rawMetrics.audio_info.orig_sr + ' Hz' : '16 kHz'}</strong></div>
           </div>
         </div>
@@ -339,7 +348,7 @@ export class UIRenderer {
           <svg width="18" height="18"><use href="#icon-${vInfo.class === 'authentic' ? 'check' : vInfo.class === 'tampered' ? 'alert' : 'info'}"></use></svg>
           <span>${vInfo.label}</span>
         </div>
-        <div class="verdict-confidence">Confidence: ${(confidence * 100).toFixed(0)}%</div>
+        <div class="verdict-confidence">${confidenceText}</div>
       </div>
 
       ${moduleSpecificHtml}
@@ -365,6 +374,17 @@ export class UIRenderer {
           <div class="details-row"><span class="details-label">Module Version:</span><span class="details-value">${result.version || '1.0'}</span></div>
           <div class="details-row"><span class="details-label">Analyzed At:</span><span class="details-value">${analyzedAt}</span></div>
           <div class="details-row"><span class="details-label">Processing Time:</span><span class="details-value">${rawMetrics.inference_ms ? rawMetrics.inference_ms.toFixed(0) + ' ms' : (rawMetrics.total_runtime_sec ? (rawMetrics.total_runtime_sec * 1000).toFixed(0) + ' ms' : 'not available')}</span></div>
+        </div>
+      </details>
+
+      <!-- Collapsible Raw JSON Debug Panel -->
+      <details class="details-drawer" style="margin-top: 8px;">
+        <summary class="details-summary">
+          <span>Raw JSON Response</span>
+          <svg width="12" height="12"><use href="#icon-sidebar"></use></svg>
+        </summary>
+        <div class="details-content" style="padding: 10px;">
+          <pre style="background: var(--bg-surface); padding: 10px; border-radius: var(--radius-sm); font-size: 0.72rem; overflow-x: auto; max-height: 320px; color: var(--text-main); font-family: monospace; white-space: pre-wrap; word-break: break-all;">${JSON.stringify(result, null, 2)}</pre>
         </div>
       </details>
 

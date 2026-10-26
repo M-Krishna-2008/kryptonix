@@ -115,15 +115,19 @@ async def analyze_audio(
         try:
             with open(cache_file, "r", encoding="utf-8") as f:
                 cached_data = json.load(f)
-            if file.filename:
-                cached_data["evidence_file"]["name"] = file.filename
-            JOB_PROGRESS[job_id] = {"stage": "completed", "percent": 100}
-            # Clean up uploaded audio unless configured to keep
-            try:
-                dest_path.unlink()
-            except Exception:
-                pass
-            return JSONResponse(content=cached_data)
+            # Only use cache if it was a successful analysis without model or fatal errors
+            cached_errors = cached_data.get("errors", [])
+            has_checkpoint_err = any("checkpoint" in str(e).lower() or "not installed" in str(e).lower() for e in cached_errors)
+            if not has_checkpoint_err and cached_data.get("raw_metrics"):
+                if file.filename:
+                    cached_data["evidence_file"]["name"] = file.filename
+                JOB_PROGRESS[job_id] = {"stage": "completed", "percent": 100}
+                # Clean up uploaded audio unless configured to keep
+                try:
+                    dest_path.unlink()
+                except Exception:
+                    pass
+                return JSONResponse(content=cached_data)
         except Exception:
             pass
 
@@ -139,13 +143,16 @@ async def analyze_audio(
 
         JOB_PROGRESS[job_id] = {"stage": "generating_visual_evidence", "percent": 90}
 
-        # Cache result
-        try:
-            CACHE_DIR.mkdir(parents=True, exist_ok=True)
-            with open(cache_file, "w", encoding="utf-8") as f:
-                json.dump(result, f, indent=2)
-        except Exception as e:
-            logger.warning(f"Failed to write cache file: {e}")
+        # Cache result only if analysis had no model checkpoint or server errors
+        res_errors = result.get("errors", [])
+        should_cache = not any("checkpoint" in str(e).lower() or "not installed" in str(e).lower() for e in res_errors)
+        if should_cache:
+            try:
+                CACHE_DIR.mkdir(parents=True, exist_ok=True)
+                with open(cache_file, "w", encoding="utf-8") as f:
+                    json.dump(result, f, indent=2)
+            except Exception as e:
+                logger.warning(f"Failed to write cache file: {e}")
 
         JOB_PROGRESS[job_id] = {"stage": "completed", "percent": 100}
 

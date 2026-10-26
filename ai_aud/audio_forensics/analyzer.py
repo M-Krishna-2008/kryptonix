@@ -1,6 +1,7 @@
 from __future__ import annotations
 import datetime
 import hashlib
+import math
 import mimetypes
 import os
 import sys
@@ -56,11 +57,13 @@ def calculate_verdict_and_confidence(
     is_silent: bool,
     model_installed: bool,
     is_lossy: bool = False,
-) -> tuple[str, float, Optional[Dict[str, Any]], List[Finding]]:
+    score_err: Optional[str] = None,
+) -> tuple[str, Optional[float], Optional[Dict[str, Any]], List[Finding]]:
     """
     Evaluates verdicts strictly adhering to Steps 2, 3, 4, 5:
-      - Speech-only VAD: windows with <50% speech are excluded from verdict scoring.
-      - If fewer than 2 speech windows remain -> "inconclusive" ("not enough speech").
+      - Speech-only VAD: windows with <50% speech are excluded from speech-only scoring.
+      - If fewer than 2 speech windows remain -> fallback to compute score across all windows,
+        add "low_speech_content" finding, keep verdict "inconclusive", and show score.
       - Partial tampering: at least 2 consecutive low windows (>= 6s run) AND
         at least 3 low windows in total AND fraction_low >= 0.25 AND >= 5 speech windows.
       - Whole clip tampering: median logit <= low_threshold AND fraction_low >= 0.60
@@ -69,6 +72,8 @@ def calculate_verdict_and_confidence(
       - Clips with fewer than 3 windows can only be authentic, suspicious or inconclusive.
       - Heuristics cannot drive the verdict.
       - Lossy input caps confidence at medium (0.70).
+      - Confidence is derived from distance to threshold and valid window count (never 0 if score exists).
+      - If no score can be computed, confidence is null with score_unavailable_reason.
     """
     findings: List[Finding] = []
     low_thresh = float(thresholds["low_threshold"])
@@ -89,6 +94,19 @@ def calculate_verdict_and_confidence(
     vad_min_speech_windows = int(thresholds.get("vad_min_speech_windows", 2))
     lossy_confidence_cap = float(thresholds.get("lossy_confidence_cap", 0.70))
 
+    total_windows = len(window_meta)
+    valid_indices = []
+    invalid_indices = []
+    for i in range(total_windows):
+        if i < len(logits):
+            val = logits[i]
+            if val is not None and not (np.isnan(val) or np.isinf(val)):
+                valid_indices.append(i)
+                continue
+        invalid_indices.append(i)
+
+    speech_indices = [i for i in valid_indices if window_meta[i].get("has_speech", True)]
+
     if not model_installed:
         findings.append(
             Finding(
@@ -103,51 +121,114 @@ def calculate_verdict_and_confidence(
                 ),
             )
         )
-        return "inconclusive", 0.0, None, findings
-
-    # Check for empty or silent recording
-    if len(logits) < 1 or is_silent:
-        return "inconclusive", 0.0, None, findings
-
-    # Step 3: Speech-only scoring (VAD gating)
-    speech_indices = [i for i, m in enumerate(window_meta) if m.get("has_speech", True)]
-    
-    # If fewer than 2 speech windows remain, return inconclusive with finding
-    if len(speech_indices) < vad_min_speech_windows:
-        findings.append(
-            Finding(
-                id="not_enough_speech",
-                check="voice_activity_detection",
-                severity="info",
-                confidence=1.0,
-                description=(
-                    f"Recording contains insufficient speech activity ({len(speech_indices)} speech window(s) detected, "
-                    f"minimum {vad_min_speech_windows} required). Windows with less than 50% speech are excluded from verdict scoring."
-                ),
-            )
-        )
+        reason = "W2V2-AASIST model weights are not installed in audio_forensics/models/."
         summary_metrics = {
             "median_logit": None,
             "min_logit": None,
             "fraction_low": 0.0,
             "longest_low_run_s": 0.0,
             "longest_low_run_range": None,
-            "speech_windows_count": len(speech_indices),
-            "total_windows_count": len(window_meta),
+            "max_consecutive_low": 0,
+            "total_low_windows": 0,
+            "speech_windows_count": 0,
+            "total_windows_count": total_windows,
+            "valid_windows_count": 0,
+            "invalid_windows_count": total_windows,
+            "used_speech_fallback": False,
+            "score_unavailable_reason": reason,
         }
-        return "inconclusive", 0.30, summary_metrics, findings
+        return "inconclusive", None, summary_metrics, findings
 
-    speech_logits = logits[speech_indices]
-    speech_meta = [window_meta[i] for i in speech_indices]
-    n_speech = len(speech_logits)
+    if score_err:
+        reason = f"Model inference error: {score_err}"
+        summary_metrics = {
+            "median_logit": None,
+            "min_logit": None,
+            "fraction_low": 0.0,
+            "longest_low_run_s": 0.0,
+            "longest_low_run_range": None,
+            "max_consecutive_low": 0,
+            "total_low_windows": 0,
+            "speech_windows_count": len(speech_indices),
+            "total_windows_count": total_windows,
+            "valid_windows_count": len(valid_indices),
+            "invalid_windows_count": len(invalid_indices),
+            "used_speech_fallback": False,
+            "score_unavailable_reason": reason,
+        }
+        return "inconclusive", None, summary_metrics, findings
 
-    median_logit = float(np.median(speech_logits))
-    min_logit = float(np.min(speech_logits))
-    low_mask = speech_logits <= low_thresh
+    # Check for empty or silent recording or no valid logits
+    if len(valid_indices) < 1 or is_silent:
+        reason = "Audio recording is silent or contains negligible acoustic energy." if is_silent else "No windows contained valid acoustic logits to score."
+        if is_silent:
+            findings.append(
+                Finding(
+                    id="silent_audio",
+                    check="silent_audio",
+                    severity="warning",
+                    confidence=1.0,
+                    description="Audio recording is silent or contains negligible acoustic energy.",
+                )
+            )
+        summary_metrics = {
+            "median_logit": None,
+            "min_logit": None,
+            "fraction_low": 0.0,
+            "longest_low_run_s": 0.0,
+            "longest_low_run_range": None,
+            "max_consecutive_low": 0,
+            "total_low_windows": 0,
+            "speech_windows_count": len(speech_indices),
+            "total_windows_count": total_windows,
+            "valid_windows_count": len(valid_indices),
+            "invalid_windows_count": len(invalid_indices),
+            "used_speech_fallback": False,
+            "score_unavailable_reason": reason,
+        }
+        return "inconclusive", None, summary_metrics, findings
+
+    # Step 3: Speech-only scoring with fallback
+    used_speech_fallback = False
+    if len(speech_indices) < vad_min_speech_windows:
+        used_speech_fallback = True
+        scoring_indices = valid_indices
+        findings.append(
+            Finding(
+                id="low_speech_content",
+                check="low_speech_content",
+                severity="info",
+                confidence=1.0,
+                description=(
+                    f"Recording contains low speech content ({len(speech_indices)} speech window(s) detected, "
+                    f"minimum {vad_min_speech_windows} required for speech-only scoring). "
+                    f"Bona-fide score was computed across all {len(valid_indices)} available window(s) as a fallback."
+                ),
+            )
+        )
+        findings.append(
+            Finding(
+                id="not_enough_speech",
+                check="voice_activity_detection",
+                severity="info",
+                confidence=1.0,
+                description="Recording has fewer than 2 speech windows.",
+            )
+        )
+    else:
+        scoring_indices = speech_indices
+
+    scoring_logits = np.array([float(logits[i]) for i in scoring_indices], dtype=np.float64)
+    scoring_meta = [window_meta[i] for i in scoring_indices]
+    n_scoring = len(scoring_logits)
+
+    median_logit = float(np.median(scoring_logits))
+    min_logit = float(np.min(scoring_logits))
+    low_mask = scoring_logits <= low_thresh
     num_low = int(np.sum(low_mask))
     fraction_low = float(np.mean(low_mask))
 
-    # Calculate contiguous run of low windows among speech windows
+    # Calculate contiguous run of low windows among scoring windows
     longest_run_s = 0.0
     current_run_s = 0.0
     best_range: Optional[List[float]] = None
@@ -156,7 +237,7 @@ def calculate_verdict_and_confidence(
     max_consecutive_low = 0
 
     for idx, is_low in enumerate(low_mask):
-        w_meta = speech_meta[idx]
+        w_meta = scoring_meta[idx]
         if is_low:
             consecutive_low += 1
             if consecutive_low > max_consecutive_low:
@@ -166,24 +247,28 @@ def calculate_verdict_and_confidence(
             current_run_s = w_meta["end_sec"] - cur_start_sec
             if current_run_s > longest_run_s:
                 longest_run_s = current_run_s
-                best_range = [round(cur_start_sec, 2), round(w_meta["end_sec"], 2)]
+                best_range = [round(float(cur_start_sec), 2), round(float(w_meta["end_sec"]), 2)]
         else:
             consecutive_low = 0
             current_run_s = 0.0
 
     summary_metrics = {
-        "median_logit": round(median_logit, 3),
-        "min_logit": round(min_logit, 3),
-        "fraction_low": round(fraction_low, 3),
-        "longest_low_run_s": round(longest_run_s, 2),
+        "median_logit": round(float(median_logit), 3),
+        "min_logit": round(float(min_logit), 3),
+        "fraction_low": round(float(fraction_low), 3),
+        "longest_low_run_s": round(float(longest_run_s), 2),
         "longest_low_run_range": best_range,
-        "max_consecutive_low": max_consecutive_low,
-        "total_low_windows": num_low,
-        "speech_windows_count": n_speech,
-        "total_windows_count": len(window_meta),
+        "max_consecutive_low": int(max_consecutive_low),
+        "total_low_windows": int(num_low),
+        "speech_windows_count": len(speech_indices),
+        "total_windows_count": total_windows,
+        "valid_windows_count": len(valid_indices),
+        "invalid_windows_count": len(invalid_indices),
+        "used_speech_fallback": bool(used_speech_fallback),
+        "score_unavailable_reason": None,
     }
 
-    # Add clip score finding
+    clip_scope = f"{n_scoring} speech window(s)" if not used_speech_fallback else f"all {n_scoring} window(s) (low speech fallback)"
     findings.append(
         Finding(
             id="w2v2_aasist_clip",
@@ -192,95 +277,101 @@ def calculate_verdict_and_confidence(
             confidence=round(min(1.0, abs(median_logit) / 3.0), 2),
             description=(
                 f"W2V2-AASIST neural detector yielded a median bona-fide score of {median_logit:.2f} "
-                f"(range: [{min_logit:.2f}, {np.max(speech_logits):.2f}], threshold band: [{low_thresh:.1f}, {high_thresh:.1f}] across {n_speech} speech windows). "
-                f"{fraction_low * 100:.1f}% of analyzed speech windows scored in the synthetic domain."
+                f"(range: [{min_logit:.2f}, {float(np.max(scoring_logits)):.2f}], threshold band: [{low_thresh:.1f}, {high_thresh:.1f}] across {clip_scope}). "
+                f"{fraction_low * 100:.1f}% of analyzed windows scored in the synthetic domain."
             ),
         )
     )
 
-    verdict = "inconclusive"
-    confidence = 0.50
+    if used_speech_fallback:
+        verdict = "inconclusive"
+        nearest_dist = min(abs(median_logit - low_thresh), abs(median_logit - high_thresh))
+        win_factor = min(1.0, len(valid_indices) / 10.0)
+        confidence = round(min(0.55, max(0.35, 0.38 + 0.08 * win_factor + 0.04 * min(1.0, nearest_dist))), 2)
+    else:
+        n_speech = len(speech_indices)
+        verdict = "inconclusive"
+        confidence = 0.50
 
-    # Step 2 & Step 4: Verdict Decision Rules
-    # Rule (b): Whole recording looks synthetic
-    # Requires median_logit <= low_thresh AND fraction_low >= 0.60 AND at least 3 speech windows
-    if n_speech >= whole_clip_min_windows and median_logit <= low_thresh and fraction_low >= whole_clip_fraction_low:
-        # Default to inconclusive / suspicious whenever evidence is borderline
-        if median_logit > (low_thresh - borderline_margin):
-            verdict = "suspicious"
-            confidence = 0.60
-        else:
+        # Step 2 & Step 4: Verdict Decision Rules
+        # Rule (b): Whole recording looks synthetic
+        # Requires median_logit <= low_thresh AND fraction_low >= 0.60 AND at least 3 speech windows
+        if n_speech >= whole_clip_min_windows and median_logit <= low_thresh and fraction_low >= whole_clip_fraction_low:
+            # Default to inconclusive / suspicious whenever evidence is borderline
+            if median_logit > (low_thresh - borderline_margin):
+                verdict = "suspicious"
+                confidence = 0.60
+            else:
+                verdict = "likely_tampered"
+                dist = abs(low_thresh - median_logit)
+                confidence = min(0.98, max(0.65, 0.60 + 0.15 * dist + 0.20 * fraction_low))
+                findings.append(
+                    Finding(
+                        id="synthetic_speech_entire",
+                        check="synthetic_speech_segment",
+                        severity="high",
+                        confidence=round(confidence, 2),
+                        description=(
+                            f"The entire recording exhibits prominent synthetic / AI-generated voice characteristics. "
+                            f"Median score ({median_logit:.2f}) is well below the synthetic threshold ({low_thresh:.1f}) "
+                            f"with {fraction_low * 100:.1f}% of windows classified as synthetic."
+                        ),
+                        location=FindingLocation(time_range_sec=[0.0, round(duration_sec, 2)]),
+                    )
+                )
+
+        # Rule (c): Partial / spliced tampering
+        elif (
+            n_speech >= partial_min_total_windows
+            and max_consecutive_low >= partial_min_consecutive
+            and num_low >= partial_min_low
+            and fraction_low >= partial_min_fraction
+            and longest_run_s >= min_run_s
+        ):
             verdict = "likely_tampered"
-            dist = abs(low_thresh - median_logit)
-            confidence = min(0.98, max(0.65, 0.60 + 0.15 * dist + 0.20 * fraction_low))
+            confidence = min(0.92, max(0.60, 0.55 + 0.05 * longest_run_s + 0.15 * fraction_low))
             findings.append(
                 Finding(
-                    id="synthetic_speech_entire",
+                    id="synthetic_speech_segment_splice",
                     check="synthetic_speech_segment",
                     severity="high",
                     confidence=round(confidence, 2),
                     description=(
-                        f"The entire recording exhibits prominent synthetic / AI-generated voice characteristics. "
-                        f"Median score ({median_logit:.2f}) is well below the synthetic threshold ({low_thresh:.1f}) "
-                        f"with {fraction_low * 100:.1f}% of windows classified as synthetic."
+                        f"Between {best_range[0] if best_range else 0.0} s and {best_range[1] if best_range else duration_sec} s "
+                        f"({max_consecutive_low} consecutive speech windows, {longest_run_s:.1f} s run) "
+                        "the voice exhibits synthetic characteristics, while the rest looks natural. "
+                        "This may be an inserted, spliced, or synthesized speech segment."
                     ),
-                    location=FindingLocation(time_range_sec=[0.0, round(duration_sec, 2)]),
+                    location=FindingLocation(time_range_sec=best_range),
                 )
             )
 
-    # Rule (c): Partial / spliced tampering
-    # Requires at least 2 CONSECUTIVE low windows (run >= 6s) AND at least 3 low windows in total
-    # AND fraction_low >= 0.25 AND at least 5 windows.
-    elif (
-        n_speech >= partial_min_total_windows
-        and max_consecutive_low >= partial_min_consecutive
-        and num_low >= partial_min_low
-        and fraction_low >= partial_min_fraction
-        and longest_run_s >= min_run_s
-    ):
-        verdict = "likely_tampered"
-        confidence = min(0.92, max(0.60, 0.55 + 0.05 * longest_run_s + 0.15 * fraction_low))
-        findings.append(
-            Finding(
-                id="synthetic_speech_segment_splice",
-                check="synthetic_speech_segment",
-                severity="high",
-                confidence=round(confidence, 2),
-                description=(
-                    f"Between {best_range[0] if best_range else 0.0} s and {best_range[1] if best_range else duration_sec} s "
-                    f"({max_consecutive_low} consecutive speech windows, {longest_run_s:.1f} s run) "
-                    "the voice exhibits synthetic characteristics, while the rest looks natural. "
-                    "This may be an inserted, spliced, or synthesized speech segment."
-                ),
-                location=FindingLocation(time_range_sec=best_range),
-            )
-        )
+        # Rule (d): Authentic
+        elif median_logit >= high_thresh and fraction_low <= fraction_low_auth:
+            verdict = "authentic"
+            dist = abs(median_logit - high_thresh)
+            confidence = min(0.95, max(0.65, 0.60 + 0.10 * dist + (1.0 - fraction_low) * 0.20))
 
-    # Rule (d): Authentic
-    elif median_logit >= high_thresh and fraction_low <= fraction_low_auth:
-        verdict = "authentic"
-        dist = abs(median_logit - high_thresh)
-        confidence = min(0.95, max(0.65, 0.60 + 0.10 * dist + (1.0 - fraction_low) * 0.20))
-
-    # Rule (e): Suspicious or inconclusive
-    else:
-        if (high_thresh - suspicious_margin) <= median_logit < high_thresh:
-            verdict = "suspicious"
-            confidence = 0.55
-        elif low_thresh < median_logit <= (low_thresh + suspicious_margin):
-            verdict = "suspicious"
-            confidence = 0.60
-        elif median_logit <= low_thresh:
-            # Below low threshold but failed whole-clip criteria (e.g. <3 windows or borderline fraction)
-            verdict = "suspicious"
-            confidence = 0.60
+        # Rule (e): Suspicious or inconclusive
         else:
-            verdict = "inconclusive"
-            confidence = 0.45
+            if (high_thresh - suspicious_margin) <= median_logit < high_thresh:
+                verdict = "suspicious"
+                confidence = 0.55
+            elif low_thresh < median_logit <= (low_thresh + suspicious_margin):
+                verdict = "suspicious"
+                confidence = 0.60
+            elif median_logit <= low_thresh:
+                verdict = "suspicious"
+                confidence = 0.60
+            else:
+                verdict = "inconclusive"
+                nearest_dist = min(abs(median_logit - low_thresh), abs(median_logit - high_thresh))
+                win_factor = min(1.0, n_speech / 10.0)
+                confidence = round(min(0.55, max(0.35, 0.40 + 0.08 * win_factor + 0.04 * min(1.0, nearest_dist))), 2)
 
-    # Safety constraint: Clips with fewer than 3 speech windows can never be "likely_tampered"
-    if n_speech < 3 and verdict.startswith("likely_tampered"):
-        verdict = "suspicious" if median_logit <= low_thresh else "inconclusive"
+        # Safety constraint: Clips with fewer than 3 speech windows can never be "likely_tampered"
+        if n_speech < 3 and verdict.startswith("likely_tampered"):
+            verdict = "suspicious" if median_logit <= low_thresh else "inconclusive"
 
     # Codec awareness confidence cap (Step 4)
     if is_lossy:
@@ -290,7 +381,7 @@ def calculate_verdict_and_confidence(
     if duration_sec < 4.5:
         confidence = min(confidence, 0.70)
 
-    return verdict, round(confidence, 2), summary_metrics, findings
+    return verdict, round(float(confidence), 2), summary_metrics, findings
 
 
 def analyze(file_path: str, options: dict | None = None) -> dict:
@@ -419,6 +510,7 @@ def analyze(file_path: str, options: dict | None = None) -> dict:
 
     logits = np.zeros(0, dtype=np.float32)
     inference_ms = 0.0
+    score_err = None
 
     if model_installed and len(windows) > 0 and not flags.get("is_silent"):
         t_inf_start = time.time()
@@ -436,6 +528,7 @@ def analyze(file_path: str, options: dict | None = None) -> dict:
         is_silent=flags.get("is_silent", False),
         model_installed=model_installed,
         is_lossy=is_lossy,
+        score_err=score_err,
     )
     findings.extend(model_findings)
 
@@ -482,6 +575,12 @@ def analyze(file_path: str, options: dict | None = None) -> dict:
     sev_rank = {"high": 0, "medium": 1, "low": 2, "info": 3}
     findings.sort(key=lambda x: sev_rank.get(x.severity, 4))
 
+    # Window count metrics
+    valid_win_count = summary_metrics.get("valid_windows_count", 0) if summary_metrics else 0
+    invalid_win_count = summary_metrics.get("invalid_windows_count", 0) if summary_metrics else 0
+    sp_win_count = summary_metrics.get("speech_windows_count", 0) if summary_metrics else 0
+    score_unavail_reason = summary_metrics.get("score_unavailable_reason") if summary_metrics else None
+
     # Package raw_metrics
     device_str = str(get_torch_device())
     raw_metrics: Dict[str, Any] = {
@@ -489,32 +588,42 @@ def analyze(file_path: str, options: dict | None = None) -> dict:
         "raw_metric_name": RAW_METRIC_NAME,
         "thresholds_used": thresholds,
         "clip_summary": summary_metrics or {},
+        "bona_fide_logit": (summary_metrics.get("median_logit") if summary_metrics else None),
         "windows_analyzed": len(windows),
+        "total_windows": len(window_meta),
+        "valid_windows": valid_win_count,
+        "invalid_windows": invalid_win_count,
+        "speech_windows": sp_win_count,
+        "score_unavailable_reason": score_unavail_reason,
         "per_window_logits": [
             {
-                "window_idx": m["index"],
-                "start_sec": m["start_sec"],
-                "end_sec": m["end_sec"],
-                "has_speech": m.get("has_speech", True),
-                "speech_ratio": m.get("speech_ratio", 1.0),
-                "bona_fide_logit": round(float(logits[i]), 4) if i < len(logits) else None,
+                "window_idx": int(m["index"]),
+                "start_sec": float(m["start_sec"]),
+                "end_sec": float(m["end_sec"]),
+                "has_speech": bool(m.get("has_speech", True)),
+                "speech_ratio": float(m.get("speech_ratio", 1.0)),
+                "bona_fide_logit": (
+                    round(float(logits[i]), 4)
+                    if (i < len(logits) and logits[i] is not None and not (np.isnan(logits[i]) or np.isinf(logits[i])))
+                    else None
+                ),
             }
             for i, m in enumerate(window_meta)
         ],
         "heuristics": raw_heuristics,
         "audio_info": {
-            "duration_sec": duration_sec,
-            "orig_sr": pre_res.get("orig_sr", sr),
-            "proc_sr": sr,
-            "rms_energy": flags.get("rms", 0.0),
-            "peak_amplitude": flags.get("peak", 0.0),
+            "duration_sec": float(duration_sec),
+            "orig_sr": int(pre_res.get("orig_sr", sr)),
+            "proc_sr": int(sr),
+            "rms_energy": float(flags.get("rms", 0.0)),
+            "peak_amplitude": float(flags.get("peak", 0.0)),
         },
         "model_info": {
-            "model_installed": model_installed,
+            "model_installed": bool(model_installed),
             "xlsr_hash": compute_file_hash(XLSR_MODEL_PATH),
             "aasist_hash": compute_file_hash(AASIST_MODEL_PATH),
             "device": device_str,
-            "inference_ms": inference_ms,
+            "inference_ms": float(inference_ms),
         },
         "environment": {
             "python_version": sys.version.split()[0],
@@ -542,6 +651,7 @@ def analyze(file_path: str, options: dict | None = None) -> dict:
         "analyzed_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
         "verdict": verdict,
         "overall_confidence": confidence,
+        "score_unavailable_reason": score_unavail_reason,
         "findings": [f.model_dump() if hasattr(f, "model_dump") else f.dict() for f in findings],
         "artifacts_dir": relative_artifacts_dir,
         "errors": errors,
