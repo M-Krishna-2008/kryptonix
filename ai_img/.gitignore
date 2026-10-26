@@ -22,6 +22,7 @@ data/
 ai_image_detection/models/clip/
 ai_image_detection/models/*.pt
 ai_image_detection/models/*.pth
+!ai_image_detection/models/fc_weights.pth
 
 # Temporary System Files
 *.tmp
