@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PS-05 AI CCTV Authenticity Verification</title>
+  <link rel="stylesheet" href="module.css">
+  <style>
+    body {
+      margin: 0;
+      padding: 2rem 1rem;
+      background-color: #030712;
+      color: #f1f5f9;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .wrapper {
+      width: 100%;
+      max-width: 1200px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div id="cctv-detection-root"></div>
+  </div>
+
+  <script src="module.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      initModule("cctv-detection-root");
+    });
+  </script>
+</body>
+</html>

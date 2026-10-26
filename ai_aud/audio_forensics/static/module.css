@@ -1,0 +1,517 @@
+/* PS-05 Audio Forensics Scoped Stylesheet */
+:root {
+  --audio_forensics-bg: #090d16;
+  --audio_forensics-card: #131b2e;
+  --audio_forensics-card-hover: #1c2742;
+  --audio_forensics-border: #233152;
+  --audio_forensics-text: #f1f5f9;
+  --audio_forensics-text-muted: #94a3b8;
+  --audio_forensics-accent: #38bdf8;
+  --audio_forensics-accent-glow: rgba(56, 189, 248, 0.25);
+  --audio_forensics-danger: #ef4444;
+  --audio_forensics-warn: #f59e0b;
+  --audio_forensics-ok: #22c55e;
+  --audio_forensics-info: #64748b;
+}
+
+.audio_forensics-wrapper {
+  background: var(--audio_forensics-bg);
+  color: var(--audio_forensics-text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  padding: 1.5rem;
+  border-radius: 12px;
+  line-height: 1.5;
+  box-sizing: border-box;
+}
+
+.audio_forensics-wrapper * {
+  box-sizing: border-box;
+}
+
+/* Header & Setup Banner */
+.audio_forensics-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--audio_forensics-border);
+}
+
+.audio_forensics-title-group h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.audio_forensics-subtitle {
+  color: var(--audio_forensics-text-muted);
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+.audio_forensics-banner {
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  color: #fbbf24;
+  padding: 0.9rem 1.2rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  font-size: 0.875rem;
+}
+
+.audio_forensics-banner strong {
+  color: #fff;
+}
+
+.audio_forensics-banner ol {
+  margin: 0.5rem 0 0 1.2rem;
+  padding: 0;
+}
+
+/* Upload Dropzone */
+.audio_forensics-dropzone {
+  border: 2px dashed var(--audio_forensics-border);
+  background: var(--audio_forensics-card);
+  border-radius: 12px;
+  padding: 2.5rem 1.5rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.audio_forensics-dropzone:hover,
+.audio_forensics-dropzone.dragover {
+  border-color: var(--audio_forensics-accent);
+  background: var(--audio_forensics-card-hover);
+  box-shadow: 0 0 20px var(--audio_forensics-accent-glow);
+}
+
+.audio_forensics-dropzone-icon {
+  font-size: 2.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.audio_forensics-dropzone-text {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--audio_forensics-text);
+}
+
+.audio_forensics-dropzone-subtext {
+  font-size: 0.8rem;
+  color: var(--audio_forensics-text-muted);
+  margin-top: 0.4rem;
+}
+
+/* Progress State */
+.audio_forensics-progress-container {
+  display: none;
+  background: var(--audio_forensics-card);
+  border: 1px solid var(--audio_forensics-border);
+  border-radius: 12px;
+  padding: 1.75rem;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.audio_forensics-progress-bar-bg {
+  width: 100%;
+  height: 8px;
+  background: #1e293b;
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 1rem 0 0.5rem 0;
+}
+
+.audio_forensics-progress-bar-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #38bdf8, #818cf8);
+  transition: width 0.3s ease;
+}
+
+.audio_forensics-progress-label {
+  font-size: 0.875rem;
+  color: var(--audio_forensics-text-muted);
+}
+
+/* Results Section */
+.audio_forensics-results {
+  display: none;
+  margin-top: 1.5rem;
+}
+
+/* Verdict & Summary Cards */
+.audio_forensics-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.audio_forensics-card {
+  background: var(--audio_forensics-card);
+  border: 1px solid var(--audio_forensics-border);
+  border-radius: 10px;
+  padding: 1.25rem;
+}
+
+.audio_forensics-card-title {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--audio_forensics-text-muted);
+  margin-bottom: 0.5rem;
+}
+
+.audio_forensics-verdict-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.9rem;
+  border-radius: 9999px;
+  font-size: 1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.audio_forensics-verdict-authentic {
+  background: rgba(34, 197, 94, 0.15);
+  color: var(--audio_forensics-ok);
+  border: 1px solid rgba(34, 197, 94, 0.4);
+}
+
+.audio_forensics-verdict-likely_tampered {
+  background: rgba(239, 68, 68, 0.15);
+  color: var(--audio_forensics-danger);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+}
+
+.audio_forensics-verdict-suspicious {
+  background: rgba(245, 158, 11, 0.15);
+  color: var(--audio_forensics-warn);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+}
+
+.audio_forensics-verdict-inconclusive {
+  background: rgba(100, 116, 139, 0.15);
+  color: #94a3b8;
+  border: 1px solid rgba(100, 116, 139, 0.4);
+}
+
+/* Logit Gauge */
+.audio_forensics-gauge-container {
+  margin-top: 0.75rem;
+}
+
+.audio_forensics-gauge-bar {
+  position: relative;
+  height: 12px;
+  background: #1e293b;
+  border-radius: 6px;
+  overflow: visible;
+}
+
+.audio_forensics-gauge-zone-synthetic {
+  position: absolute;
+  left: 0%;
+  width: 35%;
+  height: 100%;
+  background: rgba(239, 68, 68, 0.3);
+  border-top-left-radius: 6px;
+  border-bottom-left-radius: 6px;
+}
+
+.audio_forensics-gauge-zone-uncertain {
+  position: absolute;
+  left: 35%;
+  width: 30%;
+  height: 100%;
+  background: rgba(245, 158, 11, 0.25);
+}
+
+.audio_forensics-gauge-zone-authentic {
+  position: absolute;
+  left: 65%;
+  width: 35%;
+  height: 100%;
+  background: rgba(34, 197, 94, 0.3);
+  border-top-right-radius: 6px;
+  border-bottom-right-radius: 6px;
+}
+
+.audio_forensics-gauge-marker {
+  position: absolute;
+  top: -4px;
+  width: 4px;
+  height: 20px;
+  background: #fff;
+  border-radius: 2px;
+  box-shadow: 0 0 6px #fff;
+  transform: translateX(-50%);
+  transition: left 0.5s ease;
+}
+
+.audio_forensics-gauge-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.7rem;
+  color: var(--audio_forensics-text-muted);
+  margin-top: 0.5rem;
+}
+
+/* Audio Player */
+.audio_forensics-player-card {
+  margin-bottom: 1.5rem;
+  background: var(--audio_forensics-card);
+  border: 1px solid var(--audio_forensics-border);
+  border-radius: 10px;
+  padding: 1.25rem;
+}
+
+.audio_forensics-player-card audio {
+  width: 100%;
+  margin-top: 0.5rem;
+  filter: invert(0.9) hue-rotate(180deg);
+}
+
+/* Visual Evidence Section */
+.audio_forensics-evidence-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.audio_forensics-visual-box {
+  background: var(--audio_forensics-card);
+  border: 1px solid var(--audio_forensics-border);
+  border-radius: 10px;
+  padding: 1.25rem;
+}
+
+.audio_forensics-visual-box img {
+  width: 100%;
+  height: auto;
+  border-radius: 6px;
+  border: 1px solid #1e293b;
+  margin-top: 0.5rem;
+  cursor: pointer;
+}
+
+/* Interactive Timeline Seeking */
+.audio_forensics-seek-tag {
+  display: inline-block;
+  background: rgba(56, 189, 248, 0.15);
+  color: var(--audio_forensics-accent);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  border-radius: 4px;
+  padding: 0.15rem 0.45rem;
+  font-size: 0.75rem;
+  cursor: pointer;
+  margin-left: 0.5rem;
+  transition: background 0.15s;
+}
+
+.audio_forensics-seek-tag:hover {
+  background: rgba(56, 189, 248, 0.3);
+}
+
+/* Findings List */
+.audio_forensics-findings-container {
+  background: var(--audio_forensics-card);
+  border: 1px solid var(--audio_forensics-border);
+  border-radius: 10px;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.audio_forensics-finding-item {
+  border-left: 4px solid var(--audio_forensics-info);
+  background: rgba(15, 23, 42, 0.6);
+  padding: 0.9rem 1.1rem;
+  border-radius: 0 8px 8px 0;
+  margin-bottom: 0.75rem;
+  transition: background 0.2s;
+}
+
+.audio_forensics-finding-item:hover {
+  background: rgba(28, 39, 66, 0.8);
+}
+
+.audio_forensics-finding-high {
+  border-left-color: var(--audio_forensics-danger);
+}
+
+.audio_forensics-finding-medium {
+  border-left-color: var(--audio_forensics-warn);
+}
+
+.audio_forensics-finding-low {
+  border-left-color: var(--audio_forensics-accent);
+}
+
+.audio_forensics-finding-info {
+  border-left-color: var(--audio_forensics-info);
+}
+
+.audio_forensics-finding-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.35rem;
+}
+
+.audio_forensics-check-name {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.audio_forensics-badge-pill {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+}
+
+.audio_forensics-badge-high {
+  background: rgba(239, 68, 68, 0.2);
+  color: var(--audio_forensics-danger);
+}
+
+.audio_forensics-badge-medium {
+  background: rgba(245, 158, 11, 0.2);
+  color: var(--audio_forensics-warn);
+}
+
+.audio_forensics-badge-low {
+  background: rgba(56, 189, 248, 0.2);
+  color: var(--audio_forensics-accent);
+}
+
+.audio_forensics-badge-info {
+  background: rgba(100, 116, 139, 0.2);
+  color: #94a3b8;
+}
+
+.audio_forensics-finding-desc {
+  font-size: 0.875rem;
+  color: #cbd5e1;
+  margin: 0;
+}
+
+/* Actions Footer */
+.audio_forensics-actions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.audio_forensics-btn {
+  background: #1e293b;
+  color: #fff;
+  border: 1px solid var(--audio_forensics-border);
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.audio_forensics-btn:hover {
+  background: #334155;
+  border-color: #475569;
+}
+
+.audio_forensics-btn-primary {
+  background: #0284c7;
+  border-color: #0369a1;
+}
+
+.audio_forensics-btn-primary:hover {
+  background: #0369a1;
+}
+
+/* Lossy Codec Banner */
+.audio_forensics-codec-banner {
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  color: #fbbf24;
+  padding: 0.9rem 1.2rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  font-size: 0.875rem;
+  animation: afFadeIn 0.3s ease;
+}
+
+.audio_forensics-codec-banner strong {
+  color: #fde68a;
+  font-size: 0.95rem;
+}
+
+/* Timeline Window Strip (Speech vs Non-Speech) */
+.audio_forensics-timeline-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.8rem;
+  padding: 0.6rem;
+  background: #0b1120;
+  border: 1px solid var(--audio_forensics-border);
+  border-radius: 8px;
+}
+
+.audio_forensics-win-pill {
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.72rem;
+  font-family: monospace;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.audio_forensics-win-pill:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.2);
+}
+
+.audio_forensics-win-auth {
+  background: rgba(34, 197, 94, 0.2);
+  color: #4ade80;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.audio_forensics-win-low {
+  background: rgba(239, 68, 68, 0.2);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.audio_forensics-win-uncertain {
+  background: rgba(245, 158, 11, 0.2);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.audio_forensics-win-nospeech {
+  background: rgba(100, 116, 139, 0.25);
+  color: #94a3b8;
+  border: 1px dashed rgba(148, 163, 184, 0.4);
+  opacity: 0.6;
+}
+

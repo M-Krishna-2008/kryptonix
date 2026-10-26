@@ -1,0 +1,97 @@
+{
+  "manifest_version": "1.0.0",
+  "platform": "Unified AI Forensics Platform (PS-05)",
+  "models": [
+    {
+      "id": "xlsr2_300m",
+      "name": "XLS-R 300M Base Wav2Vec2",
+      "module": "ai_aud",
+      "destination": "ai_aud/audio_forensics/models/xlsr2_300m.pt",
+      "size_bytes": 3808868242,
+      "sha256": "b08927597f2c9eb2ebd7dcc3ac78ee4b5f6021cbac4b3a6c5a9deec445d80ed9",
+      "download_url": "https://dl.fbaipublicfiles.com/fairseq/wav2vec/xlsr2_300m.pt",
+      "mirror_url": "https://huggingface.co/SpeechAntiSpoofingBenchmarks/W2V2-AASIST/resolve/main/xlsr2_300m.pt",
+      "license": "CC-BY-NC 4.0 (Fairseq / Meta AI)",
+      "description": "Base XLS-R 300M self-supervised wav2vec 2.0 acoustic representation backbone.",
+      "is_committed": false
+    },
+    {
+      "id": "la_model",
+      "name": "W2V2-AASIST Anti-Spoofing Classifier",
+      "module": "ai_aud",
+      "destination": "ai_aud/audio_forensics/models/LA_model.pth",
+      "size_bytes": 1271633441,
+      "sha256": "bd6f36097259fe54e7004eb983651e5304d807be81156dbd04faccb70d91e10c",
+      "download_url": "https://huggingface.co/SpeechAntiSpoofingBenchmarks/W2V2-AASIST/resolve/main/LA_model.pth",
+      "mirror_url": "",
+      "license": "ASVspoof Research License / MIT",
+      "description": "AASIST spectral graph attention network backend for audio deepfake classification.",
+      "is_committed": false
+    },
+    {
+      "id": "clip_vit_l_14",
+      "name": "CLIP ViT-L/14 Feature Backbone",
+      "module": "ai_img",
+      "destination": "ai_img/ai_image_detection/models/clip/ViT-L-14.pt",
+      "size_bytes": 932768134,
+      "sha256": "b8cca3fd41ae0c99ba7e8951adf17d267cdb84cd88be6f7c2e0eca1737a03836",
+      "download_url": "https://openaipublic.azureedge.net/clip/models/b8cca3fd41ae0c99ba7e8951adf17d267cdb84cd88be6f7c2e0eca1737a03836/ViT-L-14.pt",
+      "mirror_url": "https://huggingface.co/openai/clip-vit-large-patch14/resolve/main/pytorch_model.bin",
+      "license": "MIT (OpenAI CLIP)",
+      "description": "OpenAI CLIP ViT-L/14 visual encoder backbone for Universal Fake Detect.",
+      "is_committed": false
+    },
+    {
+      "id": "univfd_fc_weights",
+      "name": "Universal Fake Detect Linear Probe Classifier",
+      "module": "ai_img",
+      "destination": "ai_img/ai_image_detection/models/fc_weights.pth",
+      "size_bytes": 4083,
+      "sha256": "477100745713bcc957beb2b40859536859b6483fd6301b3b9293151b194c7847",
+      "download_url": "https://raw.githubusercontent.com/Yuheng-Li/UniversalFakeDetect/main/pretrained_weights/fc_weights.pth",
+      "mirror_url": "",
+      "license": "MIT (Universal Fake Detect)",
+      "description": "Trained linear probe weights (<25 MB, committed in repository).",
+      "is_committed": true
+    },
+    {
+      "id": "trufor",
+      "name": "TruFor Tampering Localization Weights",
+      "module": "image_forgery",
+      "destination": "image_forgery/image_forgery/models/trufor/trufor.pth.tar",
+      "size_bytes": 281496429,
+      "sha256": "ac1d90e329a72e0d66e8665e123a19e94bfae3209c3ef8a4f9ca3b91578c7844",
+      "download_url": "https://huggingface.co/spaces/FraudDetection/trufor-splicing-detecto/resolve/main/TruFor_train_test/pretrained_models/trufor.pth.tar",
+      "mirror_url": "https://www.grip.unina.it/download/prog/TruFor/TruFor_weights.zip",
+      "license": "Nonprofit / Research / Informational use only (GRIP Unina)",
+      "description": "TruFor cross-modal deep transformer weights for forgery and splice localization.",
+      "is_committed": false
+    },
+    {
+      "id": "yolo_cctv_best",
+      "name": "Fine-Tuned CCTV AI Tamper Detector",
+      "module": "ai_cctv",
+      "destination": "ai_cctv/ai_cctv_detection/models/best.pt",
+      "size_bytes": 11024379,
+      "sha256": "4dc60327c256cb9576b56ad142184c7597485d8d0511352d4e8a518744fbcc30",
+      "download_url": "",
+      "mirror_url": "",
+      "license": "Proprietary Project Artifact",
+      "description": "Locally fine-tuned YOLO11s classifier on CCTV forensic validation frames (10.51 MB, committed in repository).",
+      "is_committed": true
+    },
+    {
+      "id": "yolo11s_cls_base",
+      "name": "YOLO11s Classification Base Weights",
+      "module": "ai_cctv",
+      "destination": "ai_cctv/models/yolo11s-cls.pt",
+      "size_bytes": 13630112,
+      "sha256": "e2b605d1c8c212b434a75a32759a6f7adf1d2b29c35f76bdccd4c794cb653cf2",
+      "download_url": "https://github.com/ultralytics/assets/releases/download/v8.3.0/yolo11s-cls.pt",
+      "mirror_url": "",
+      "license": "AGPL-3.0 (Ultralytics)",
+      "description": "Stock YOLO11s classifier base checkpoint.",
+      "is_committed": false
+    }
+  ]
+}

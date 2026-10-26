@@ -1,0 +1,40 @@
+# ==============================================================================
+# PS-05 Unified AI Forensics Platform - .gitattributes
+# Preserve CRLF for Windows batch files and LF for shell scripts
+# ==============================================================================
+
+# Auto-detect text files and normalize line endings
+* text=auto
+
+# Windows Batch scripts MUST have CRLF line endings (CRLF corruption silently breaks CMD)
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# Shell scripts must have LF line endings
+*.sh text eol=lf
+*.bash text eol=lf
+
+# Configuration & Web assets
+*.json text
+*.yaml text
+*.yml text
+*.toml text
+*.md text
+*.txt text
+*.py text
+*.html text
+*.css text
+*.js text
+
+# Binary models & fixtures
+*.pt binary
+*.pth binary
+*.tar binary
+*.bin binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.mp4 binary
+*.wav binary
+*.ico binary

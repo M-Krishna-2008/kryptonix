@@ -1,0 +1,31 @@
+# PS-05 Audio Forensics Pinned & Locked Dependencies
+# Tested on Python 3.10.11 (64-bit, Windows)
+# Pip version: 24.0 (strictly below 24.1)
+
+# Core Web & API
+fastapi>=0.115.0
+uvicorn>=0.32.0
+python-multipart>=0.0.12
+pydantic>=2.10.0
+pyyaml>=6.0.2
+
+# Scientific & Signal Processing (NumPy strictly < 2.0.0 for Fairseq)
+numpy==1.26.4
+scipy>=1.15.0
+matplotlib>=3.10.0
+
+# Audio I/O & Universal Container Fallbacks
+soundfile>=0.14.0
+librosa>=0.11.0
+av>=17.1.0
+mutagen>=1.48.0
+
+# Deep Learning Framework & Fairseq
+torch>=2.0.0
+torchaudio>=2.0.0
+fairseq==0.12.2
+
+# Testing & Synthetic Speech Engine
+pytest>=8.3.0
+httpx>=0.28.0
+pyttsx3>=2.90

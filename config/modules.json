@@ -1,0 +1,167 @@
+{
+  "platform": {
+    "name": "Unified AI Forensics Platform",
+    "version": "1.0.0",
+    "gateway_default_port": 8080,
+    "host": "127.0.0.1"
+  },
+  "modules": [
+    {
+      "id": "ai_aud",
+      "display_name": "Audio Deepfake & Tamper Detection",
+      "short_name": "Audio",
+      "description": "Acoustic authenticity verification using Wav2Vec2/XLS-R 300M and AASIST spectral graph attention network.",
+      "cwd": "ai_aud",
+      "python_version": "3.10.11",
+      "venv_python": "ai_aud/.venv/Scripts/python.exe",
+      "default_port": 8001,
+      "proxy_prefix": "/api/aud",
+      "upstream_prefix": "/api/audio_forensics",
+      "health_endpoint": "/api/audio_forensics/health",
+      "analyze_endpoint": "/api/audio_forensics/analyze",
+      "progress_endpoint": "/api/audio_forensics/progress/{job_id}",
+      "artifacts_endpoint": "/api/audio_forensics/artifacts",
+      "form_field": "file",
+      "allowed_extensions": [".wav", ".mp3", ".flac", ".ogg", ".m4a", ".aac"],
+      "allowed_mime_types": ["audio/wav", "audio/x-wav", "audio/mpeg", "audio/flac", "audio/x-flac", "audio/ogg", "audio/mp4", "audio/x-m4a"],
+      "max_upload_bytes": 524288000,
+      "is_async_job": false,
+      "forensic_type": "audio_logit",
+      "metric_label": "Bona-Fide Logit",
+      "score_direction": "higher_is_authentic",
+      "score_tooltip": "Raw uncalibrated acoustic logit (higher = genuine human speech). Never interpret as a percentage or probability.",
+      "thresholds": {
+        "low_threshold": -3.7,
+        "high_threshold": 1.5
+      },
+      "start_command": ["main_standalone.py"],
+      "model_files": [
+        {
+          "name": "XLS-R 300M Base",
+          "path": "ai_aud/audio_forensics/models/xlsr2_300m.pt",
+          "size_bytes": 3808868242,
+          "sha256": "b08927597f2c9eb2ebd7dcc3ac78ee4b5f6021cbac4b3a6c5a9deec445d80ed9"
+        },
+        {
+          "name": "W2V2-AASIST Backend",
+          "path": "ai_aud/audio_forensics/models/LA_model.pth",
+          "size_bytes": 1271633441,
+          "sha256": "bd6f36097259fe54e7004eb983651e5304d807be81156dbd04faccb70d91e10c"
+        }
+      ]
+    },
+    {
+      "id": "ai_img",
+      "display_name": "AI Image Synthesis Detection",
+      "short_name": "AI Image",
+      "description": "Universal Fake Detection (UnivFD) via frozen CLIP ViT-L/14 feature backbone and calibrated linear probe.",
+      "cwd": "ai_img",
+      "python_version": "3.13",
+      "venv_python": "ai_img/.venv/Scripts/python.exe",
+      "default_port": 8002,
+      "proxy_prefix": "/api/img",
+      "upstream_prefix": "/api/ai_image_detection",
+      "health_endpoint": "/api/ai_image_detection/health",
+      "analyze_endpoint": "/api/ai_image_detection/analyze",
+      "artifacts_endpoint": "/api/ai_image_detection/artifacts",
+      "form_field": "file",
+      "allowed_extensions": [".jpg", ".jpeg", ".png", ".webp", ".bmp", ".tiff"],
+      "allowed_mime_types": ["image/jpeg", "image/png", "image/webp", "image/bmp", "image/tiff"],
+      "max_upload_bytes": 104857600,
+      "is_async_job": false,
+      "forensic_type": "calibrated_prob",
+      "metric_label": "Calibrated Fake Probability P(fake)",
+      "score_direction": "higher_is_fake",
+      "thresholds": {
+        "real_cutoff": 0.20,
+        "fake_cutoff": 0.80
+      },
+      "start_command": ["main_standalone.py"],
+      "model_files": [
+        {
+          "name": "CLIP ViT-L/14 Backbone",
+          "path": "ai_img/ai_image_detection/models/clip/ViT-L-14.pt",
+          "size_bytes": 932768134,
+          "sha256": "b8cca3fd41ae0c99ba7e8951adf17d267cdb84cd88be6f7c2e0eca1737a03836"
+        },
+        {
+          "name": "Linear Probe Classifier",
+          "path": "ai_img/ai_image_detection/models/fc_weights.pth",
+          "size_bytes": 4083,
+          "sha256": "477100745713bcc957beb2b40859536859b6483fd6301b3b9293151b194c7847"
+        }
+      ]
+    },
+    {
+      "id": "image_forgery",
+      "display_name": "Photoshop Forgery & Tamper Localization",
+      "short_name": "Photoshop Forgery",
+      "description": "Multi-scale tamper detection, splicing localization, and copy-move analysis with TruFor deep transformer, ELA, and metadata.",
+      "cwd": "image_forgery/image_forgery",
+      "python_version": "3.13",
+      "venv_python": "image_forgery/image_forgery/.venv/Scripts/python.exe",
+      "default_port": 8003,
+      "proxy_prefix": "/api/forgery",
+      "upstream_prefix": "/api/image_forgery",
+      "health_endpoint": "/api/image_forgery/health",
+      "analyze_endpoint": "/api/image_forgery/analyze",
+      "engines_endpoint": "/api/image_forgery/engines",
+      "artifacts_endpoint": "/api/image_forgery/artifacts",
+      "form_field": "file",
+      "allowed_extensions": [".jpg", ".jpeg", ".png", ".webp", ".tiff"],
+      "allowed_mime_types": ["image/jpeg", "image/png", "image/webp", "image/tiff"],
+      "max_upload_bytes": 104857600,
+      "is_async_job": false,
+      "forensic_type": "localization_heatmap",
+      "metric_label": "TruFor Integrity Score",
+      "start_command": ["main_standalone.py"],
+      "model_files": [
+        {
+          "name": "TruFor Model Weights",
+          "path": "image_forgery/image_forgery/models/trufor/trufor.pth.tar",
+          "size_bytes": 281496429,
+          "sha256": "ac1d90e329a72e0d66e8665e123a19e94bfae3209c3ef8a4f9ca3b91578c7844"
+        }
+      ]
+    },
+    {
+      "id": "ai_cctv",
+      "display_name": "AI CCTV Video Forensics",
+      "short_name": "CCTV Video",
+      "description": "Temporal CCTV video authenticity analysis using fine-tuned YOLO11-cls, native tile analysis, and Platt probability scaling.",
+      "cwd": "ai_cctv",
+      "python_version": "3.10",
+      "venv_python": "ai_cctv/.venv/Scripts/python.exe",
+      "default_port": 8004,
+      "proxy_prefix": "/api/cctv",
+      "upstream_prefix": "/api/ai_cctv_detection",
+      "health_endpoint": "/api/ai_cctv_detection/health",
+      "analyze_endpoint": "/api/ai_cctv_detection/analyze",
+      "progress_endpoint": "/api/ai_cctv_detection/progress/{job_id}",
+      "artifacts_endpoint": "/api/ai_cctv_detection/artifacts",
+      "form_field": "file",
+      "allowed_extensions": [".mp4", ".avi", ".mov", ".mkv"],
+      "allowed_mime_types": ["video/mp4", "video/x-msvideo", "video/quicktime", "video/x-matroska"],
+      "max_upload_bytes": 2147483648,
+      "is_async_job": true,
+      "supports_rtsp": true,
+      "forensic_type": "video_timeline",
+      "metric_label": "Aggregated Median AI Probability",
+      "start_command": ["main_standalone.py"],
+      "model_files": [
+        {
+          "name": "Fine-Tuned YOLO11s CCTV Tamper Detector",
+          "path": "ai_cctv/ai_cctv_detection/models/best.pt",
+          "size_bytes": 11024379,
+          "sha256": "4dc60327c256cb9576b56ad142184c7597485d8d0511352d4e8a518744fbcc30"
+        },
+        {
+          "name": "YOLO11s Classification Base Weights",
+          "path": "ai_cctv/models/yolo11s-cls.pt",
+          "size_bytes": 13630112,
+          "sha256": "e2b605d1c8c212b434a75a32759a6f7adf1d2b29c35f76bdccd4c794cb653cf2"
+        }
+      ]
+    }
+  ]
+}

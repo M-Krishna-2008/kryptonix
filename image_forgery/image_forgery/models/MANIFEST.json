@@ -1,0 +1,12 @@
+{
+  "trufor": {
+    "engine": "trufor",
+    "file": "trufor.pth.tar",
+    "local_path": "models/trufor/trufor.pth.tar",
+    "sha256": "ac1d90e329a72e0d66e8665e123a19e94bfae3209c3ef8a4f9ca3b91578c7844",
+    "zip_md5": "7bee48f3476c75616c3c5721ab256ff8",
+    "source_url": "https://www.grip.unina.it/download/prog/TruFor/TruFor_weights.zip",
+    "mirror_url": "https://huggingface.co/spaces/FraudDetection/trufor-splicing-detecto/resolve/main/TruFor_train_test/pretrained_models/trufor.pth.tar",
+    "license_note": "TruFor: informational and nonprofit use only, see third_party/TruFor/LICENSE.txt"
+  }
+}

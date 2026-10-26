@@ -1,0 +1,39 @@
+# Virtual Environment
+.venv/
+test_venv/
+env/
+venv/
+
+# Model Checkpoints (Heavy binary weights)
+audio_forensics/models/*.pt
+audio_forensics/models/*.pth
+audio_forensics/models/*.bin
+audio_forensics/models/*.onnx
+
+# Uploads & Temporary Data
+uploads/
+cache/
+logs/
+artifacts/
+data_audio/
+data_diagnosis/
+
+# Python cache & compiler outputs
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+*.egg-info/
+build/
+dist/
+
+# Pre-compiled wheels (keep wheels/ folder tracked if desired, or ignore locally built)
+wheels/*.whl
+!wheels/fairseq-0.12.2-cp310-cp310-win_amd64.whl
+!wheels/numpy-1.26.4-cp310-cp310-win_amd64.whl
+
+# OS-specific files
+Thumbs.db
+Desktop.ini
+.DS_Store

@@ -1,0 +1,16 @@
+<Configuration>
+  <VGpu>Enable</VGpu>
+  <Networking>Enable</Networking>
+  <MappedFolders>
+    <MappedFolder>
+      <!-- Host folder path where this audio forensics module is located -->
+      <HostFolder>C:\Users\galah\Downloads\bihar\ai_aud</HostFolder>
+      <SandboxFolder>C:\Users\WDAGUtilityAccount\Desktop\audio_forensics</SandboxFolder>
+      <ReadOnly>false</ReadOnly>
+    </MappedFolder>
+  </MappedFolders>
+  <LogonCommand>
+    <!-- Automatically launches the clean-room automated installer upon sandbox startup -->
+    <Command>cmd.exe /c "cd /d C:\Users\WDAGUtilityAccount\Desktop\audio_forensics &amp;&amp; run_platform.bat"</Command>
+  </LogonCommand>
+</Configuration>

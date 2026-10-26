@@ -1,0 +1,65 @@
+{
+  "module_name": "ai_cctv_detection",
+  "version": "1.0.0",
+  "display_name": "AI CCTV Tampering & Deepfake Detection",
+  "description": "Forensic video authenticity analysis using temporal windowing, native 224x224 tile analysis, YOLO11s classifier, and Platt probability scaling.",
+  "integration": {
+    "entry_point": "ai_cctv_detection.analyzer:analyze",
+    "router_import": "ai_cctv_detection.router:router",
+    "route_prefix": "/api/ai_cctv_detection",
+    "static_directory": "ai_cctv_detection/static",
+    "static_route_mount": "/ai_cctv_detection-static",
+    "standalone_app": "main_standalone:app"
+  },
+  "runtime_requirements": {
+    "python_version": ">=3.10,<3.12",
+    "preferred_python": "3.10",
+    "os": ["Windows 10", "Windows 11"],
+    "architecture": "x86_64",
+    "disk_space_bytes": 10737418240,
+    "disk_space_description": "10 GB minimum free disk space for dependencies, cache, and evidence storage",
+    "ram_min_mb": 4096,
+    "ram_recommended_mb": 8192,
+    "gpu_required": false,
+    "gpu_optional": true,
+    "gpu_vram_min_mb": 2048,
+    "gpu_vram_recommended_mb": 4096,
+    "supports_cpu_fallback": true,
+    "supports_concurrent_runs": true
+  },
+  "models": [
+    {
+      "name": "Fine-Tuned CCTV AI Tamper Detector",
+      "filename": "best.pt",
+      "path": "ai_cctv_detection/models/best.pt",
+      "size_bytes": 11024379,
+      "sha256": "4dc60327c256cb9576b56ad142184c7597485d8d0511352d4e8a518744fbcc30",
+      "downloadable": false,
+      "description": "Locally fine-tuned YOLO11s-cls on 2,156 forensic CCTV frames (10 real, 10 tampered)."
+    },
+    {
+      "name": "YOLO11s Classification Base Weights",
+      "filename": "yolo11s-cls.pt",
+      "path": "models/yolo11s-cls.pt",
+      "size_bytes": 13630112,
+      "sha256": "e2b605d1c8c212b434a75a32759a6f7adf1d2b29c35f76bdccd4c794cb653cf2",
+      "downloadable": true,
+      "download_url": "https://github.com/ultralytics/assets/releases/download/v8.3.0/yolo11s-cls.pt",
+      "description": "Stock YOLO11s classifier base checkpoint."
+    }
+  ],
+  "calibrations": [
+    {
+      "path": "ai_cctv_detection/configs/calibration.yaml",
+      "type": "platt_scaling",
+      "description": "Platt scaling logistic parameters (A, B) calibrated on held-out validation CCTV split."
+    }
+  ],
+  "contracts": {
+    "file_input_types": ["video/mp4", "video/x-msvideo", "video/quicktime", "video/x-matroska"],
+    "max_file_size_bytes": 2147483648,
+    "result_format_version": "1.0",
+    "verdicts": ["authentic", "suspicious", "likely_tampered", "inconclusive"],
+    "severities": ["info", "low", "medium", "high"]
+  }
+}

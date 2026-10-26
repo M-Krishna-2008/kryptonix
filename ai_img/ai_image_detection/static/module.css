@@ -1,0 +1,550 @@
+/**
+ * ai_image_detection UI Stylesheet
+ * Scoped strictly under .ai_image_detection-
+ * Uses CSS custom properties for theming compatibility with parent platform dashboard.
+ */
+
+:root {
+  --aid-bg: #0b0f19;
+  --aid-card: #111827;
+  --aid-card-hover: #1f293d;
+  --aid-text: #f3f4f6;
+  --aid-text-muted: #9ca3af;
+  --aid-border: #374151;
+  --aid-accent: #3b82f6;
+  --aid-accent-glow: rgba(59, 130, 246, 0.25);
+  --aid-danger: #ef4444;
+  --aid-danger-glow: rgba(239, 68, 68, 0.25);
+  --aid-warn: #f59e0b;
+  --aid-warn-glow: rgba(245, 158, 11, 0.25);
+  --aid-ok: #10b981;
+  --aid-ok-glow: rgba(16, 185, 129, 0.25);
+  --aid-inconclusive: #8b5cf6;
+  --aid-radius-sm: 6px;
+  --aid-radius-md: 10px;
+  --aid-radius-lg: 16px;
+  --aid-transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Base Container */
+.ai_image_detection-root {
+  background: var(--bg, var(--aid-bg));
+  color: var(--text, var(--aid-text));
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+  padding: 1.5rem;
+  border-radius: var(--aid-radius-lg);
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.ai_image_detection-root * {
+  box-sizing: border-box;
+}
+
+/* Header & Module Title */
+.ai_image_detection-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--aid-border);
+  padding-bottom: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.ai_image_detection-title-group h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: var(--text, var(--aid-text));
+}
+
+.ai_image_detection-subtitle {
+  margin: 0.25rem 0 0;
+  font-size: 0.875rem;
+  color: var(--aid-text-muted);
+}
+
+.ai_image_detection-badge-spec {
+  font-size: 0.75rem;
+  background: rgba(59, 130, 246, 0.15);
+  color: #60a5fa;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  padding: 0.25rem 0.6rem;
+  border-radius: 9999px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* Upload Zone */
+.ai_image_detection-upload-area {
+  background: var(--card, var(--aid-card));
+  border: 2px dashed var(--aid-border);
+  border-radius: var(--aid-radius-md);
+  padding: 2.5rem 1.5rem;
+  text-align: center;
+  cursor: pointer;
+  transition: var(--aid-transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.ai_image_detection-upload-area:hover,
+.ai_image_detection-upload-area.is-dragover {
+  border-color: var(--accent, var(--aid-accent));
+  background: rgba(59, 130, 246, 0.05);
+  box-shadow: 0 0 20px var(--aid-accent-glow);
+}
+
+.ai_image_detection-upload-icon {
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 1rem;
+  color: var(--accent, var(--aid-accent));
+}
+
+.ai_image_detection-upload-text {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+}
+
+.ai_image_detection-upload-subtext {
+  font-size: 0.85rem;
+  color: var(--aid-text-muted);
+}
+
+.ai_image_detection-file-input {
+  display: none;
+}
+
+/* Loading & Progress State */
+.ai_image_detection-loading-state {
+  display: none;
+  text-align: center;
+  padding: 3rem 1.5rem;
+  background: var(--card, var(--aid-card));
+  border-radius: var(--aid-radius-md);
+  margin-top: 1rem;
+}
+
+.ai_image_detection-spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid rgba(59, 130, 246, 0.15);
+  border-top-color: var(--accent, var(--aid-accent));
+  border-radius: 50%;
+  animation: ai_image_detection-spin 0.9s linear infinite;
+  margin: 0 auto 1.25rem;
+}
+
+@keyframes ai_image_detection-spin {
+  to { transform: rotate(360deg); }
+}
+
+.ai_image_detection-loading-text {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text, var(--aid-text));
+}
+
+.ai_image_detection-loading-stage {
+  font-size: 0.85rem;
+  color: var(--aid-text-muted);
+  margin-top: 0.3rem;
+}
+
+/* Results Grid */
+.ai_image_detection-results-container {
+  display: none;
+  margin-top: 1.5rem;
+  animation: ai_image_detection-fade-in 0.3s ease-out;
+}
+
+@keyframes ai_image_detection-fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Inconclusive Warning Banner */
+.ai_image_detection-warning-banner {
+  display: none;
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid var(--warn, var(--aid-warn));
+  border-left: 5px solid var(--warn, var(--aid-warn));
+  padding: 1rem 1.25rem;
+  border-radius: var(--aid-radius-sm);
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: #fef3c7;
+}
+
+.ai_image_detection-warning-title {
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.3rem;
+  color: var(--warn, var(--aid-warn));
+}
+
+/* Verdict Top Card */
+.ai_image_detection-verdict-card {
+  background: var(--card, var(--aid-card));
+  border: 1px solid var(--aid-border);
+  border-radius: var(--aid-radius-md);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+@media (max-width: 800px) {
+  .ai_image_detection-verdict-card {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+}
+
+.ai_image_detection-verdict-badge {
+  padding: 0.8rem 1.4rem;
+  border-radius: var(--aid-radius-md);
+  font-size: 1.25rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.ai_image_detection-verdict-badge.verdict-authentic {
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--ok, var(--aid-ok));
+  border: 2px solid var(--ok, var(--aid-ok));
+  box-shadow: 0 0 15px var(--aid-ok-glow);
+}
+
+.ai_image_detection-verdict-badge.verdict-likely_tampered {
+  background: rgba(239, 68, 68, 0.15);
+  color: var(--danger, var(--aid-danger));
+  border: 2px solid var(--danger, var(--aid-danger));
+  box-shadow: 0 0 15px var(--aid-danger-glow);
+}
+
+.ai_image_detection-verdict-badge.verdict-suspicious {
+  background: rgba(245, 158, 11, 0.15);
+  color: var(--warn, var(--aid-warn));
+  border: 2px solid var(--warn, var(--aid-warn));
+  box-shadow: 0 0 15px var(--aid-warn-glow);
+}
+
+.ai_image_detection-verdict-badge.verdict-inconclusive {
+  background: rgba(139, 92, 246, 0.15);
+  color: #a78bfa;
+  border: 2px solid #8b5cf6;
+  box-shadow: 0 0 15px rgba(139, 92, 246, 0.25);
+}
+
+.ai_image_detection-verdict-details h3 {
+  margin: 0 0 0.4rem;
+  font-size: 1.25rem;
+}
+
+.ai_image_detection-meta-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.ai_image_detection-chip {
+  font-size: 0.75rem;
+  background: #1f2937;
+  color: #e5e7eb;
+  padding: 0.25rem 0.6rem;
+  border-radius: var(--aid-radius-sm);
+  border: 1px solid #374151;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.ai_image_detection-chip-accent {
+  background: rgba(59, 130, 246, 0.15);
+  border-color: rgba(59, 130, 246, 0.4);
+  color: #93c5fd;
+}
+
+/* Confidence Gauge Bar */
+.ai_image_detection-gauge-container {
+  min-width: 220px;
+}
+
+.ai_image_detection-gauge-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: var(--aid-text-muted);
+  margin-bottom: 0.4rem;
+}
+
+.ai_image_detection-gauge-value {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text, var(--aid-text));
+}
+
+.ai_image_detection-gauge-track {
+  height: 12px;
+  background: #1f2937;
+  border-radius: 9999px;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #374151;
+}
+
+.ai_image_detection-gauge-fill {
+  height: 100%;
+  border-radius: 9999px;
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  background: linear-gradient(90deg, #10b981 0%, #f59e0b 50%, #ef4444 100%);
+}
+
+.ai_image_detection-gauge-zones {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.65rem;
+  color: var(--aid-text-muted);
+  margin-top: 0.35rem;
+}
+
+/* Evidence Analysis Layout: 2 Columns */
+.ai_image_detection-content-layout {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+@media (max-width: 950px) {
+  .ai_image_detection-content-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.ai_image_detection-panel {
+  background: var(--card, var(--aid-card));
+  border: 1px solid var(--aid-border);
+  border-radius: var(--aid-radius-md);
+  padding: 1.25rem;
+}
+
+.ai_image_detection-panel-title {
+  margin: 0 0 1rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 0.6rem;
+}
+
+/* Heatmap Viewer */
+.ai_image_detection-heatmap-wrapper {
+  position: relative;
+  border-radius: var(--aid-radius-sm);
+  overflow: hidden;
+  background: #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 240px;
+}
+
+.ai_image_detection-heatmap-img {
+  max-width: 100%;
+  max-height: 380px;
+  object-fit: contain;
+  display: block;
+  border-radius: var(--aid-radius-sm);
+  transition: transform 0.2s ease;
+}
+
+.ai_image_detection-heatmap-legend {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 0.75rem;
+  font-size: 0.75rem;
+  color: var(--aid-text-muted);
+}
+
+.ai_image_detection-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.ai_image_detection-legend-box {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+}
+
+/* Findings List */
+.ai_image_detection-findings-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.ai_image_detection-finding-item {
+  background: #192233;
+  border: 1px solid var(--aid-border);
+  border-left: 4px solid #6b7280;
+  border-radius: var(--aid-radius-sm);
+  padding: 0.85rem 1rem;
+  transition: var(--aid-transition);
+}
+
+.ai_image_detection-finding-item:hover {
+  background: #1f2c42;
+}
+
+.ai_image_detection-finding-item.sev-high {
+  border-left-color: var(--danger, var(--aid-danger));
+}
+
+.ai_image_detection-finding-item.sev-medium {
+  border-left-color: var(--warn, var(--aid-warn));
+}
+
+.ai_image_detection-finding-item.sev-low {
+  border-left-color: var(--ok, var(--aid-ok));
+}
+
+.ai_image_detection-finding-item.sev-info {
+  border-left-color: var(--accent, var(--aid-accent));
+}
+
+.ai_image_detection-finding-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.35rem;
+}
+
+.ai_image_detection-check-name {
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: #f9fafb;
+}
+
+.ai_image_detection-sev-pill {
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: 9999px;
+  text-transform: uppercase;
+}
+
+.ai_image_detection-sev-pill.sev-high {
+  background: rgba(239, 68, 68, 0.2);
+  color: #f87171;
+}
+
+.ai_image_detection-sev-pill.sev-medium {
+  background: rgba(245, 158, 11, 0.2);
+  color: #fbbf24;
+}
+
+.ai_image_detection-sev-pill.sev-low {
+  background: rgba(16, 185, 129, 0.2);
+  color: #34d399;
+}
+
+.ai_image_detection-sev-pill.sev-info {
+  background: rgba(59, 130, 246, 0.2);
+  color: #93c5fd;
+}
+
+.ai_image_detection-finding-desc {
+  font-size: 0.825rem;
+  line-height: 1.45;
+  color: #d1d5db;
+  margin: 0;
+}
+
+/* Action Bar & Buttons */
+.ai_image_detection-action-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid var(--aid-border);
+  padding-top: 1rem;
+}
+
+.ai_image_detection-btn {
+  background: var(--accent, var(--aid-accent));
+  color: #fff;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border-radius: var(--aid-radius-sm);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: var(--aid-transition);
+}
+
+.ai_image_detection-btn:hover {
+  filter: brightness(1.15);
+  box-shadow: 0 0 12px var(--aid-accent-glow);
+}
+
+.ai_image_detection-btn-secondary {
+  background: #374151;
+  color: #e5e7eb;
+}
+
+.ai_image_detection-btn-secondary:hover {
+  background: #4b5563;
+  box-shadow: none;
+}
+
+/* Collapsible Raw Metrics */
+.ai_image_detection-raw-toggle {
+  background: none;
+  border: none;
+  color: var(--aid-text-muted);
+  cursor: pointer;
+  font-size: 0.8rem;
+  text-decoration: underline;
+  padding: 0;
+}
+
+.ai_image_detection-raw-json {
+  display: none;
+  margin-top: 1rem;
+  background: #030712;
+  border: 1px solid #1f2937;
+  padding: 1rem;
+  border-radius: var(--aid-radius-sm);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.75rem;
+  max-height: 250px;
+  overflow: auto;
+  color: #93c5fd;
+}

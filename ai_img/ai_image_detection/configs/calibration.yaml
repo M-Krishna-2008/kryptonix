@@ -1,0 +1,10 @@
+# Platt scaling calibration parameters: P(fake) = 1 / (1 + exp(-(a * logit + b)))
+# Default (a=1.0, b=0.0) represents identity calibration.
+version: "1.0"
+
+calibration:
+  method: "platt_scaling"
+  a: 1.0
+  b: 0.0
+  fitted_dataset: "identity_default"
+  fitted_at: "2026-10-24T00:00:00Z"

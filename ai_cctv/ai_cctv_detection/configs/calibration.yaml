@@ -1,0 +1,8 @@
+# Platt Scaling Calibration Parameters
+# Formula: P_calibrated = 1 / (1 + exp(-(a * logit + b)))
+version: "1.0"
+method: "platt"
+a: 1.0
+b: 0.0
+last_calibrated_at: '2026-10-24T10:35:00+00:00'
+validation_samples: 221

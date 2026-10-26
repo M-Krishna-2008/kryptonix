@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Image Detection - PS-05 Forensic Platform</title>
+  <link rel="stylesheet" href="./module.css" />
+  <style>
+    /* Standalone harness page wrapper */
+    body {
+      margin: 0;
+      padding: 2rem 1rem;
+      background-color: #070a13;
+      color: #f3f4f6;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+    }
+    .standalone-container {
+      width: 100%;
+      max-width: 1200px;
+    }
+    .standalone-nav {
+      margin-bottom: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #1f2937;
+      padding-bottom: 0.75rem;
+    }
+    .standalone-nav-title {
+      font-size: 0.85rem;
+      color: #9ca3af;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+  <div class="standalone-container">
+    <div class="standalone-nav">
+      <span class="standalone-nav-title">PS-05 Digital Evidence Platform &bull; Standalone Module Harness</span>
+      <span style="font-size: 0.75rem; color: #10b981; font-weight: 600;">&bull; Local Offline Mode Active</span>
+    </div>
+    
+    <!-- Target Container Mount Point -->
+    <div id="ai-image-detection-mount"></div>
+  </div>
+
+  <script src="./module.js"></script>
+  <script>
+    // Initialize standalone module
+    document.addEventListener("DOMContentLoaded", () => {
+      initModule("ai-image-detection-mount");
+    });
+  </script>
+</body>
+</html>

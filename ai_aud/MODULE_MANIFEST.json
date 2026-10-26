@@ -1,0 +1,72 @@
+{
+  "module_name": "audio_forensics",
+  "human_title": "PS-05 Audio Forensics (Deepfake & Tampering Verification)",
+  "version": "1.0.0",
+  "python_version": "3.10.11",
+  "entry_app": "main_standalone:app",
+  "router_import_path": "audio_forensics.router:router",
+  "api_prefix": "/api/audio_forensics",
+  "default_port": 8000,
+  "static_folder": "audio_forensics/static",
+  "model_files": [
+    {
+      "path": "audio_forensics/models/xlsr2_300m.pt",
+      "size_bytes": 3808868242,
+      "sha256": "b08927597f2c9eb2ebd7dcc3ac78ee4b5f6021cbac4b3a6c5a9deec445d80ed9",
+      "download_url": "https://dl.fbaipublicfiles.com/fairseq/wav2vec/xlsr2_300m.pt",
+      "description": "Base XLS-R 300M self-supervised wav2vec 2.0 representations"
+    },
+    {
+      "path": "audio_forensics/models/LA_model.pth",
+      "size_bytes": 1271633441,
+      "sha256": "bd6f36097259fe54e7004eb983651e5304d807be81156dbd04faccb70d91e10c",
+      "download_url": "https://huggingface.co/SpeechAntiSpoofingBenchmarks/W2V2-AASIST/resolve/main/LA_model.pth",
+      "description": "W2V2-AASIST graph-attention spectral acoustic anti-spoofing backend"
+    }
+  ],
+  "python_packages": {
+    "python": "3.10.11",
+    "pip": "24.0",
+    "torch": ">=2.0.0",
+    "torchaudio": ">=2.0.0",
+    "numpy": "1.26.4",
+    "fairseq": "0.12.2",
+    "fastapi": "0.115.0",
+    "uvicorn": "0.32.0",
+    "python-multipart": "0.0.12",
+    "pydantic": "2.10.0",
+    "pyyaml": "6.0.2",
+    "scipy": "1.15.3",
+    "matplotlib": "3.10.0",
+    "soundfile": "0.14.0",
+    "librosa": "0.11.0",
+    "av": "17.1.0",
+    "mutagen": "1.48.1",
+    "pytest": "8.3.0",
+    "httpx": "0.28.0",
+    "pyttsx3": "2.99"
+  },
+  "bundled_wheels": [
+    "wheels/fairseq-0.12.2-cp310-cp310-win_amd64.whl",
+    "wheels/numpy-1.26.4-cp310-cp310-win_amd64.whl"
+  ],
+  "system_tools_required": {
+    "os": "Windows 10/11 64-bit",
+    "winget": "Optional (used for auto-provisioning Python 3.10 and VC++ runtime)",
+    "git": "Not required (all wheels pre-compiled)",
+    "ffmpeg": "Not required (PyAV statically bundles FFmpeg codecs)",
+    "node": "Not required (frontend is vanilla HTML5/ES6/CSS)",
+    "vc_runtime": "Microsoft Visual C++ 2015-2022 Redistributable (x64)"
+  },
+  "disk_space_needed": "10 GB minimum (5 GB model weights + 3.5 GB isolated virtualenv + buffer)",
+  "gpu_optional_or_required": "optional",
+  "integration_notes": {
+    "conflicts": [
+      "NumPy must strictly be < 2.0.0 (1.26.4 pinned) to prevent Fairseq deprecated scalar type attribute failures.",
+      "Fairseq 0.12.2 requires Python <= 3.10; fails on Python 3.11+ due to Cython extension incompatibilities.",
+      "Pip must be < 24.1 (pinned to 24.0) to prevent pyproject metadata resolution failures with fairseq."
+    ],
+    "mount_route": "/api/audio_forensics",
+    "static_mount": "/static/audio_forensics"
+  }
+}

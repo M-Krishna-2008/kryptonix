@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PS-05: Audio Forensics & Authenticity Platform</title>
+  <link rel="stylesheet" href="/static/module.css" />
+  <style>
+    body {
+      margin: 0;
+      padding: 2rem 1rem;
+      background: #090d16;
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+    }
+    .main-container {
+      width: 100%;
+      max-width: 1050px;
+    }
+  </style>
+</head>
+<body>
+  <div class="main-container">
+    <div id="audio-forensics-app"></div>
+  </div>
+
+  <script src="/static/module.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      if (typeof initModule === "function") {
+        initModule("audio-forensics-app");
+      } else {
+        console.error("initModule is not defined.");
+      }
+    });
+  </script>
+</body>
+</html>

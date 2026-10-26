@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PS-05: Image Forgery Forensic Module</title>
+  <link rel="stylesheet" href="/image_forgery-static/module.css">
+  <style>
+    body {
+      margin: 0;
+      padding: 2rem 1rem;
+      background-color: #0b0f19;
+      color: #f8fafc;
+      min-height: 100vh;
+    }
+  </style>
+</head>
+<body>
+  <div id="image-forgery-root"></div>
+
+  <footer style="margin-top: 2.5rem; text-align: center; font-size: 0.8125rem; color: #94a3b8; border-top: 1px solid #1e293b; padding-top: 1rem;">
+    <span>Powered by TruFor (GRIP UNINA) &bull; Licensed for non-commercial research use only. See <code style="color: #cbd5e1;">third_party/TruFor/LICENSE.txt</code></span>
+  </footer>
+
+  <script src="/image_forgery-static/module.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      initModule("image-forgery-root");
+    });
+  </script>
+</body>
+</html>

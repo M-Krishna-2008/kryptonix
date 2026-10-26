@@ -1,0 +1,58 @@
+{
+  "module_name": "ai_image_detection",
+  "human_title": "AI Image Detection & Forensic Integrity Analysis (Universal Fake Detect)",
+  "python_version": "3.10",
+  "entry_app": "main_standalone:app",
+  "router_import_path": "ai_image_detection.router:router",
+  "api_prefix": "/api/ai_image_detection",
+  "default_port": 8000,
+  "static_folder": "ai_image_detection/static",
+  "model_files": [
+    {
+      "name": "CLIP ViT-L/14 Backbone",
+      "path": "ai_image_detection/models/clip/ViT-L-14.pt",
+      "size_bytes": 932768134,
+      "sha256": "b8cca3fd41ae0c99ba7e8951adf17d267cdb84cd88be6f7c2e0eca1737a03836",
+      "download_url": "https://openaipublic.azureedge.net/clip/models/b8cca3fd41ae0c99ba7e8951adf17d267cdb84cd88be6f7c2e0eca1737a03836/ViT-L-14.pt"
+    },
+    {
+      "name": "Universal Fake Detect Linear Probe",
+      "path": "ai_image_detection/models/fc_weights.pth",
+      "size_bytes": 4083,
+      "sha256": "477100745713bcc957beb2b40859536859b6483fd6301b3b9293151b194c7847",
+      "download_url": "https://raw.githubusercontent.com/Yuheng-Li/UniversalFakeDetect/main/pretrained_weights/fc_weights.pth"
+    }
+  ],
+  "python_packages": {
+    "torch": ">=2.2.0",
+    "torchvision": ">=0.17.0",
+    "numpy": ">=1.24.0,<3.0.0",
+    "pillow": ">=10.0.0",
+    "fastapi": ">=0.110.0",
+    "uvicorn": ">=0.28.0",
+    "python-multipart": ">=0.0.9",
+    "ftfy": ">=6.1.1",
+    "regex": ">=2023.12.25",
+    "tqdm": ">=4.66.1",
+    "pydantic": ">=2.0.0",
+    "clip": "git archive or wheel from openai/CLIP"
+  },
+  "system_tools_required": [],
+  "disk_space_needed_gb": 6.5,
+  "gpu_optional": true,
+  "gpu_required": false,
+  "potential_conflicts": [
+    {
+      "package": "torch",
+      "note": "CUDA 12.4 build installed when NVIDIA GPU detected; falls back cleanly to PyTorch CPU build if no GPU or driver present."
+    },
+    {
+      "package": "numpy",
+      "note": "Tested on NumPy 2.2.6. If sibling modules require NumPy 1.x (e.g. NumPy < 2.0 due to legacy C-extensions), this module remains fully compatible with numpy==1.26.4."
+    },
+    {
+      "package": "clip",
+      "note": "Installed via direct ZIP release archive without requiring host Git tool."
+    }
+  ]
+}

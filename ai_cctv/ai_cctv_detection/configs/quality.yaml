@@ -1,0 +1,21 @@
+# CCTV Quality Gate Configuration
+version: "1.0"
+
+resolution:
+  min_width: 480
+  min_height: 360
+
+blur:
+  # Laplacian variance thresholds
+  unusable_threshold: 20.0   # Below this, frame is dropped (completely blurred)
+  good_threshold: 60.0       # Above this, frame is considered sharp
+
+compression:
+  # Blockiness artifact score (0.0 clean - 1.0 severely degraded)
+  unusable_blockiness: 0.45  # Drop frame if compression destroys structural details
+  good_blockiness: 0.20      # Below this, frame compression is minimal
+
+weights:
+  good: 1.0
+  poor: 0.3
+  dropped: 0.0

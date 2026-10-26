@@ -1,0 +1,404 @@
+/* ==========================================================================
+   UI Components: Conversation Thread, Cards, Verdicts, Badges
+   ========================================================================== */
+
+/* Conversation message rows */
+.message-row {
+  width: 100%;
+  margin-bottom: 28px;
+  display: flex;
+  flex-direction: column;
+}
+
+.message-row.user {
+  align-items: flex-end;
+}
+
+.message-row.assistant {
+  align-items: flex-start;
+}
+
+/* User Upload Bubble */
+.user-bubble {
+  max-width: 80%;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: var(--shadow-sm);
+}
+
+.user-file-thumb {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-sm);
+  background-color: var(--bg-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent-primary);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.user-file-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.user-file-info {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.user-file-name {
+  font-weight: 600;
+  font-size: 0.92rem;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 320px;
+}
+
+.user-file-meta {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  display: flex;
+  gap: 8px;
+}
+
+/* Assistant Forensic Card */
+.assistant-card {
+  width: 100%;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: 22px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border-light);
+  padding-bottom: 14px;
+}
+
+.card-module-tag {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--accent-primary);
+}
+
+.card-timestamp {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+
+/* Verdict Badges */
+.verdict-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+}
+
+.verdict-banner.authentic {
+  background-color: var(--verdict-authentic-bg);
+  color: var(--verdict-authentic-text);
+  border-color: var(--verdict-authentic-border);
+}
+
+.verdict-banner.suspicious {
+  background-color: var(--verdict-suspicious-bg);
+  color: var(--verdict-suspicious-text);
+  border-color: var(--verdict-suspicious-border);
+}
+
+.verdict-banner.tampered {
+  background-color: var(--verdict-tampered-bg);
+  color: var(--verdict-tampered-text);
+  border-color: var(--verdict-tampered-border);
+}
+
+.verdict-banner.inconclusive {
+  background-color: var(--verdict-inconclusive-bg);
+  color: var(--verdict-inconclusive-text);
+  border-color: var(--verdict-inconclusive-border);
+}
+
+.verdict-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.verdict-confidence {
+  font-size: 0.85rem;
+  font-weight: 500;
+  opacity: 0.9;
+}
+
+/* Progress / Streaming Loading State */
+.loading-box {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px 0;
+}
+
+.progress-track {
+  width: 100%;
+  height: 8px;
+  background-color: var(--bg-subtle);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background-color: var(--accent-primary);
+  border-radius: var(--radius-full);
+  transition: width 300ms ease;
+}
+
+.progress-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.84rem;
+  color: var(--text-secondary);
+}
+
+/* Findings List */
+.findings-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.findings-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+}
+
+.finding-item {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  font-size: 0.88rem;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.finding-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.finding-check-name {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 0.88rem;
+}
+
+.finding-severity {
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: var(--radius-full);
+  text-transform: uppercase;
+}
+
+.finding-severity.high {
+  background-color: var(--verdict-tampered-bg);
+  color: var(--verdict-tampered-text);
+}
+
+.finding-severity.medium {
+  background-color: var(--verdict-suspicious-bg);
+  color: var(--verdict-suspicious-text);
+}
+
+.finding-severity.low, .finding-severity.info {
+  background-color: var(--bg-subtle);
+  color: var(--text-muted);
+}
+
+.finding-desc {
+  color: var(--text-secondary);
+  line-height: 1.45;
+}
+
+/* Persistent Forensic Caution Line */
+.forensic-caution-banner {
+  padding: 10px 14px;
+  background-color: var(--bg-subtle);
+  border-left: 3px solid var(--accent-primary);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.forensic-caution-text {
+  font-weight: 500;
+}
+
+/* Expandable Details Drawer */
+.details-drawer {
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background-color: var(--bg-surface);
+}
+
+.details-summary {
+  padding: 10px 14px;
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  user-select: none;
+}
+
+.details-summary:hover {
+  background-color: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.details-content {
+  padding: 14px;
+  border-top: 1px solid var(--border-light);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background-color: var(--bg-card);
+}
+
+.details-row {
+  display: flex;
+  justify-content: space-between;
+  word-break: break-all;
+}
+
+.details-label {
+  color: var(--text-muted);
+  font-weight: 500;
+  min-width: 140px;
+}
+
+.details-value {
+  color: var(--text-primary);
+  text-align: right;
+}
+
+/* Actions Row at Bottom of Card */
+.card-actions-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  padding-top: 6px;
+}
+
+.btn-secondary {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-sm);
+  padding: 7px 12px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all var(--transition-fast);
+}
+
+.btn-secondary:hover {
+  background-color: var(--bg-hover);
+  color: var(--text-primary);
+  border-color: var(--border-focus);
+}
+
+/* Tooltip */
+.has-tooltip {
+  position: relative;
+  cursor: help;
+  border-bottom: 1px dotted var(--text-muted);
+}
+
+.has-tooltip:hover::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 125%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: var(--text-primary);
+  color: var(--bg-primary);
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  line-height: 1.35;
+  white-space: normal;
+  width: 240px;
+  z-index: 1000;
+  box-shadow: var(--shadow-md);
+  pointer-events: none;
+}
+
+/* Error Card */
+.error-card {
+  border-color: var(--verdict-tampered-border);
+  background-color: var(--bg-card);
+}
+
+.error-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--verdict-tampered-text);
+  font-weight: 600;
+}
+
+.error-message {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}

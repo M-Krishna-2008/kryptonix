@@ -1,0 +1,37 @@
+# Environments
+.venv/
+env/
+venv/
+ENV/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+
+# Large Model Checkpoints
+models/trufor/*.tar
+models/trufor/*.pth
+models/trufor/*.bin
+models/trufor/*.th
+models/trufor/*.tmp
+!models/trufor/.gitkeep
+!models/MANIFEST.json
+
+# User Uploads & Forensic Artifacts
+uploads/
+artifacts/
+*.npz
+
+# Logs & Diagnostics
+logs/
+setup.log
+*.log
+
+# Operating System temporary files
+.DS_Store
+Thumbs.db
+desktop.ini
+*.tmp

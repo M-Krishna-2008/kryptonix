@@ -1,0 +1,80 @@
+thresholds:
+  low_threshold: -3.7
+  high_threshold: 1.5
+  suspicious_margin: 0.5
+  borderline_margin: 0.5
+  whole_clip_fraction_low: 0.6
+  whole_clip_min_windows: 3
+  partial_min_consecutive_low: 2
+  partial_min_low_windows: 3
+  partial_min_fraction_low: 0.25
+  partial_min_total_windows: 5
+  min_run_seconds: 6.0
+  fraction_low_authentic: 0.05
+  vad_speech_ratio_threshold: 0.5
+  vad_min_speech_windows: 2
+  lossy_confidence_cap: 0.7
+  codec_classes:
+    lossless:
+      low_threshold: -3.7
+      high_threshold: 1.5
+      borderline_margin: 0.5
+      lossy_margin: 0.0
+    lossy_high_bitrate:
+      low_threshold: -4.13
+      high_threshold: 1.5
+      borderline_margin: 0.75
+      lossy_margin: 1.0
+    lossy_low_bitrate:
+      low_threshold: -4.5
+      high_threshold: 1.5
+      borderline_margin: 1.0
+      lossy_margin: 2.0
+calibration_metadata:
+  calibrated: true
+  target_far_percent: 2.0
+  genuine_dir: data_audio\bonafide
+  spoof_dir: data_audio\spoof
+  formats_evaluated:
+    original:
+      auc: 0.7333333333333334
+      eer: 0.3904761904761905
+      eer_threshold: -2.0048999786376953
+      low_threshold: -4.125160217285156
+      high_threshold: 1.5
+      false_accusation_rate: 0.2
+      detection_rate: 0.23809523809523808
+      g_min: -4.2270002365112305
+      g_med: -0.6930000185966492
+      g_max: 4.2083001136779785
+      s_min: -6.311999797821045
+      s_med: -2.628000020980835
+      s_max: 1.5509999990463257
+    mp3_128k:
+      auc: 0.6571428571428573
+      eer: 0.3904761904761905
+      eer_threshold: -1.4407999515533447
+      low_threshold: -3.7048800468444822
+      high_threshold: 1.5
+      false_accusation_rate: 0.2
+      detection_rate: 0.23809523809523808
+      g_min: -3.75600004196167
+      g_med: -0.925000011920929
+      g_max: 4.119100093841553
+      s_min: -6.322999954223633
+      s_med: -2.0680999755859375
+      s_max: 2.119999885559082
+    mp3_64k:
+      auc: 0.6666666666666666
+      eer: 0.3904761904761905
+      eer_threshold: -1.7093000411987305
+      low_threshold: -3.7949999809265136
+      high_threshold: 1.5
+      false_accusation_rate: 0.2
+      detection_rate: 0.23809523809523808
+      g_min: -3.8489999771118164
+      g_med: -1.0360000133514404
+      g_max: 4.363800048828125
+      s_min: -6.331999778747559
+      s_med: -2.450000047683716
+      s_max: 1.7489999532699585

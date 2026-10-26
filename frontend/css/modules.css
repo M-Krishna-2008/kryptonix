@@ -1,0 +1,391 @@
+/* ==========================================================================
+   Specialized Forensic Visualizers Styling
+   (Audio Waveform, Image Gauge, Forgery Overlay Slider, CCTV Video Timeline)
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Audio Forensic View
+   -------------------------------------------------------------------------- */
+.audio-metric-container {
+  display: flex;
+  gap: 16px;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 16px 20px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.metric-value-box {
+  display: flex;
+  flex-direction: column;
+}
+
+.metric-title {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.metric-number {
+  font-family: var(--font-mono);
+  font-size: 1.9rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.metric-subnote {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.audio-player-wrapper {
+  margin: 12px 0 6px;
+  width: 100%;
+}
+
+.audio-player-wrapper audio {
+  width: 100%;
+  height: 36px;
+  border-radius: var(--radius-sm);
+}
+
+.waveform-canvas-box {
+  width: 100%;
+  height: 110px;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  position: relative;
+  overflow: hidden;
+  margin: 8px 0;
+}
+
+.waveform-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.speech-window-legend {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.76rem;
+  color: var(--text-muted);
+  padding: 0 4px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legend-color-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+}
+
+.legend-color-dot.analyzed {
+  background-color: var(--accent-primary);
+}
+
+.legend-color-dot.baseline {
+  background-color: var(--border-medium);
+}
+
+/* --------------------------------------------------------------------------
+   2. AI Image Forensic View
+   -------------------------------------------------------------------------- */
+.gauge-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 16px 20px;
+}
+
+.gauge-bar-track {
+  width: 100%;
+  height: 16px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(to right, #2E7D32 0%, #D97706 50%, #C53030 100%);
+  position: relative;
+}
+
+.gauge-marker {
+  position: absolute;
+  top: -4px;
+  width: 6px;
+  height: 24px;
+  background-color: #FFFFFF;
+  border: 2px solid var(--text-primary);
+  border-radius: 3px;
+  transform: translateX(-50%);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  transition: left 0.4s ease;
+}
+
+.gauge-labels-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.76rem;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.crops-grid-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.crops-title {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.crops-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  max-width: 280px;
+}
+
+.crop-cell {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-sm);
+  padding: 6px;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+}
+
+/* --------------------------------------------------------------------------
+   3. Image Forgery & Tamper Localization View
+   -------------------------------------------------------------------------- */
+.forgery-controls-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 10px 16px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.view-mode-toggle {
+  display: flex;
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.btn-mode-tab {
+  background: none;
+  border: none;
+  padding: 6px 12px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.btn-mode-tab.active {
+  background-color: var(--accent-primary);
+  color: #FFFFFF;
+}
+
+.opacity-slider-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+}
+
+.opacity-slider {
+  width: 130px;
+  accent-color: var(--accent-primary);
+}
+
+.forgery-display-stage {
+  width: 100%;
+  min-height: 280px;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.overlay-container {
+  position: relative;
+  max-width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.overlay-img-base {
+  max-width: 100%;
+  max-height: 480px;
+  display: block;
+  object-fit: contain;
+  border-radius: var(--radius-sm);
+}
+
+.overlay-img-heatmap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+  border-radius: var(--radius-sm);
+  mix-blend-mode: screen;
+}
+
+.side-by-side-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  width: 100%;
+  padding: 8px;
+}
+
+.side-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.side-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.side-img {
+  width: 100%;
+  max-height: 280px;
+  object-fit: contain;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-light);
+  background-color: var(--bg-card);
+}
+
+/* --------------------------------------------------------------------------
+   4. CCTV Video Forensic View
+   -------------------------------------------------------------------------- */
+.video-preview-wrapper {
+  width: 100%;
+  background-color: #000000;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.video-player {
+  width: 100%;
+  max-height: 360px;
+  display: block;
+}
+
+.timeline-canvas-box {
+  width: 100%;
+  height: 120px;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  position: relative;
+  margin-bottom: 8px;
+  cursor: crosshair;
+}
+
+.timeline-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.flagged-ranges-container {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.flagged-ranges-title {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.flagged-pill-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.seek-pill {
+  background-color: var(--verdict-tampered-bg);
+  border: 1px solid var(--verdict-tampered-border);
+  color: var(--verdict-tampered-text);
+  border-radius: var(--radius-full);
+  padding: 4px 10px;
+  font-size: 0.78rem;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all var(--transition-fast);
+}
+
+.seek-pill:hover {
+  background-color: var(--accent-primary);
+  border-color: var(--accent-primary);
+  color: #FFFFFF;
+}
+
+.quality-gate-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+  margin-top: 6px;
+}
+
+.quality-gate-table td {
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.quality-gate-table td:last-child {
+  text-align: right;
+  font-family: var(--font-mono);
+  font-weight: 600;
+}

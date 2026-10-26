@@ -1,0 +1,424 @@
+/* ai_cctv_detection Module CSS
+   Scoped strictly under .ai_cctv_detection- to prevent collisions in parent dashboard.
+*/
+
+:root {
+  --ai_cctv_detection-bg: #0b0f17;
+  --ai_cctv_detection-card: #151d2a;
+  --ai_cctv_detection-card-border: #243044;
+  --ai_cctv_detection-text: #f1f5f9;
+  --ai_cctv_detection-subtext: #94a3b8;
+  --ai_cctv_detection-accent: #38bdf8;
+  --ai_cctv_detection-accent-hover: #0284c7;
+  --ai_cctv_detection-danger: #ef4444;
+  --ai_cctv_detection-danger-bg: rgba(239, 68, 68, 0.15);
+  --ai_cctv_detection-warn: #f59e0b;
+  --ai_cctv_detection-warn-bg: rgba(245, 158, 11, 0.15);
+  --ai_cctv_detection-ok: #10b981;
+  --ai_cctv_detection-ok-bg: rgba(16, 185, 129, 0.15);
+  --ai_cctv_detection-info: #64748b;
+  --ai_cctv_detection-info-bg: rgba(100, 116, 139, 0.15);
+  --ai_cctv_detection-radius: 8px;
+}
+
+.ai_cctv_detection-root {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  color: var(--ai_cctv_detection-text);
+  background-color: var(--ai_cctv_detection-bg);
+  padding: 1.5rem;
+  border-radius: var(--ai_cctv_detection-radius);
+  max-width: 1200px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+.ai_cctv_detection-root * {
+  box-sizing: border-box;
+}
+
+/* Header */
+.ai_cctv_detection-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--ai_cctv_detection-card-border);
+  padding-bottom: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.ai_cctv_detection-title {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.ai_cctv_detection-tag {
+  font-size: 0.75rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  background-color: rgba(56, 189, 248, 0.15);
+  color: var(--ai_cctv_detection-accent);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+/* Alert Banner */
+.ai_cctv_detection-banner {
+  padding: 1rem;
+  border-radius: var(--ai_cctv_detection-radius);
+  margin-bottom: 1.5rem;
+  display: flex;
+  gap: 0.8rem;
+  align-items: flex-start;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.ai_cctv_detection-banner-warn {
+  background: var(--ai_cctv_detection-warn-bg);
+  border: 1px solid var(--ai_cctv_detection-warn);
+  color: #fbbf24;
+}
+
+.ai_cctv_detection-banner-info {
+  background: var(--ai_cctv_detection-info-bg);
+  border: 1px solid var(--ai_cctv_detection-card-border);
+  color: var(--ai_cctv_detection-subtext);
+}
+
+.ai_cctv_detection-banner pre {
+  margin: 0.5rem 0 0 0;
+  padding: 0.5rem;
+  background: #0f172a;
+  border-radius: 4px;
+  overflow-x: auto;
+  font-family: monospace;
+  color: #38bdf8;
+}
+
+/* Upload Dropzone */
+.ai_cctv_detection-dropzone {
+  border: 2px dashed var(--ai_cctv_detection-card-border);
+  background-color: var(--ai_cctv_detection-card);
+  padding: 2.5rem 1.5rem;
+  border-radius: var(--ai_cctv_detection-radius);
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 1.5rem;
+}
+
+.ai_cctv_detection-dropzone:hover,
+.ai_cctv_detection-dropzone.ai_cctv_detection-active {
+  border-color: var(--ai_cctv_detection-accent);
+  background-color: rgba(56, 189, 248, 0.04);
+}
+
+.ai_cctv_detection-dropzone-icon {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.ai_cctv_detection-dropzone-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+}
+
+.ai_cctv_detection-dropzone-subtitle {
+  color: var(--ai_cctv_detection-subtext);
+  font-size: 0.85rem;
+}
+
+.ai_cctv_detection-file-input {
+  display: none;
+}
+
+/* Options Bar */
+.ai_cctv_detection-options {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  background: var(--ai_cctv_detection-card);
+  padding: 0.75rem 1rem;
+  border-radius: var(--ai_cctv_detection-radius);
+  border: 1px solid var(--ai_cctv_detection-card-border);
+}
+
+.ai_cctv_detection-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+/* Progress Box */
+.ai_cctv_detection-progress-card {
+  background: var(--ai_cctv_detection-card);
+  border: 1px solid var(--ai_cctv_detection-card-border);
+  border-radius: var(--ai_cctv_detection-radius);
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.ai_cctv_detection-progress-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.6rem;
+  font-size: 0.9rem;
+}
+
+.ai_cctv_detection-progress-bar-bg {
+  width: 100%;
+  height: 8px;
+  background: #1e293b;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.ai_cctv_detection-progress-bar-fill {
+  height: 100%;
+  background: var(--ai_cctv_detection-accent);
+  transition: width 0.3s ease;
+}
+
+/* Results Grid */
+.ai_cctv_detection-results {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.ai_cctv_detection-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+}
+
+.ai_cctv_detection-card {
+  background: var(--ai_cctv_detection-card);
+  border: 1px solid var(--ai_cctv_detection-card-border);
+  border-radius: var(--ai_cctv_detection-radius);
+  padding: 1.25rem;
+}
+
+.ai_cctv_detection-card-title {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ai_cctv_detection-subtext);
+  margin-bottom: 0.6rem;
+  font-weight: 600;
+}
+
+/* Verdict Badges */
+.ai_cctv_detection-verdict {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.ai_cctv_detection-verdict-likely_tampered {
+  background: var(--ai_cctv_detection-danger-bg);
+  border: 1px solid var(--ai_cctv_detection-danger);
+  color: #f87171;
+}
+
+.ai_cctv_detection-verdict-authentic {
+  background: var(--ai_cctv_detection-ok-bg);
+  border: 1px solid var(--ai_cctv_detection-ok);
+  color: #34d399;
+}
+
+.ai_cctv_detection-verdict-suspicious {
+  background: var(--ai_cctv_detection-warn-bg);
+  border: 1px solid var(--ai_cctv_detection-warn);
+  color: #fbbf24;
+}
+
+.ai_cctv_detection-verdict-inconclusive {
+  background: var(--ai_cctv_detection-info-bg);
+  border: 1px solid var(--ai_cctv_detection-card-border);
+  color: var(--ai_cctv_detection-subtext);
+}
+
+.ai_cctv_detection-confidence-val {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--ai_cctv_detection-text);
+  margin-top: 0.4rem;
+}
+
+/* Evidence Inspection View */
+.ai_cctv_detection-evidence-viewer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.2rem;
+}
+
+@media (max-width: 900px) {
+  .ai_cctv_detection-evidence-viewer {
+    grid-template-columns: 1fr;
+  }
+}
+
+.ai_cctv_detection-video-box video {
+  width: 100%;
+  border-radius: var(--ai_cctv_detection-radius);
+  background: #000;
+  border: 1px solid var(--ai_cctv_detection-card-border);
+}
+
+.ai_cctv_detection-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.8rem;
+}
+
+.ai_cctv_detection-chip {
+  background: #1e293b;
+  border: 1px solid var(--ai_cctv_detection-danger);
+  color: #fca5a5;
+  padding: 0.3rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.ai_cctv_detection-chip:hover {
+  background: var(--ai_cctv_detection-danger);
+  color: #fff;
+}
+
+/* Artifact Images */
+.ai_cctv_detection-artifact-img {
+  width: 100%;
+  border-radius: var(--ai_cctv_detection-radius);
+  border: 1px solid var(--ai_cctv_detection-card-border);
+  display: block;
+  margin-top: 0.5rem;
+  background: #0f172a;
+}
+
+/* Findings List */
+.ai_cctv_detection-finding-item {
+  background: #111827;
+  border-left: 4px solid var(--ai_cctv_detection-card-border);
+  border-radius: 4px;
+  padding: 0.9rem;
+  margin-bottom: 0.75rem;
+}
+
+.ai_cctv_detection-finding-high {
+  border-left-color: var(--ai_cctv_detection-danger);
+}
+
+.ai_cctv_detection-finding-medium {
+  border-left-color: var(--ai_cctv_detection-warn);
+}
+
+.ai_cctv_detection-finding-low {
+  border-left-color: var(--ai_cctv_detection-ok);
+}
+
+.ai_cctv_detection-finding-info {
+  border-left-color: var(--ai_cctv_detection-info);
+}
+
+.ai_cctv_detection-finding-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.4rem;
+}
+
+.ai_cctv_detection-finding-title {
+  font-weight: 600;
+  font-size: 0.88rem;
+}
+
+.ai_cctv_detection-finding-badge {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  padding: 0.15rem 0.4rem;
+  border-radius: 3px;
+  font-weight: 700;
+}
+
+.ai_cctv_detection-badge-high {
+  background: var(--ai_cctv_detection-danger-bg);
+  color: #f87171;
+}
+
+.ai_cctv_detection-badge-medium {
+  background: var(--ai_cctv_detection-warn-bg);
+  color: #fbbf24;
+}
+
+.ai_cctv_detection-badge-low {
+  background: var(--ai_cctv_detection-ok-bg);
+  color: #34d399;
+}
+
+.ai_cctv_detection-badge-info {
+  background: var(--ai_cctv_detection-info-bg);
+  color: var(--ai_cctv_detection-subtext);
+}
+
+.ai_cctv_detection-finding-desc {
+  font-size: 0.84rem;
+  color: #cbd5e1;
+  line-height: 1.4;
+}
+
+/* Actions */
+.ai_cctv_detection-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.ai_cctv_detection-btn {
+  background: var(--ai_cctv_detection-accent);
+  color: #0b0f17;
+  border: none;
+  border-radius: 6px;
+  padding: 0.6rem 1.2rem;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.ai_cctv_detection-btn:hover {
+  background: var(--ai_cctv_detection-accent-hover);
+}
+
+.ai_cctv_detection-btn-secondary {
+  background: #1e293b;
+  color: var(--ai_cctv_detection-text);
+  border: 1px solid var(--ai_cctv_detection-card-border);
+}
+
+.ai_cctv_detection-btn-secondary:hover {
+  background: #334155;
+}

@@ -1,0 +1,34 @@
+# Decision thresholds per photo-type for UnivFD AI Image Detection
+# Anything between 'real' and 'fake' is classified as 'uncertain'
+version: "1.0"
+
+thresholds:
+  camera_photo:
+    fake: 0.80
+    real: 0.20
+    description: "Standard camera capture with valid sensor/exif characteristics"
+  
+  ai_render:
+    fake: 0.75
+    real: 0.25
+    description: "Synthetic render or digital art lacking natural sensor noise"
+  
+  social_media_reupload:
+    fake: 0.90
+    real: 0.10
+    description: "Heavily compressed re-upload; thresholds widened to prevent compression false positives"
+  
+  screenshot:
+    fake: 0.95
+    real: 0.05
+    description: "Screen capture; thresholds strictly widened due to rendering/rescaling artifacts"
+  
+  edited:
+    fake: 0.90
+    real: 0.10
+    description: "Post-processed or edited with editing software tags"
+  
+  small_or_blurry:
+    fake: null
+    real: null
+    description: "Resolution too small (<256px) or Laplacian blur variance too low (<100)"

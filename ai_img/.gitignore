@@ -1,0 +1,30 @@
+# Virtual Environment
+.venv/
+env/
+venv/
+ENV/
+
+# Python cache & bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+
+# Forensic Evidence & Local Outputs
+uploads/
+artifacts/
+ai_image_detection/cache/
+logs/
+data/
+
+# Model Checkpoints (Heavy Binaries)
+ai_image_detection/models/clip/
+ai_image_detection/models/*.pt
+ai_image_detection/models/*.pth
+
+# Temporary System Files
+*.tmp
+*.log
+.DS_Store
+Thumbs.db

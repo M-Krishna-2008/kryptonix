@@ -1,0 +1,129 @@
+/* ==========================================================================
+   Design Tokens & Claude-like Warm Minimalist Aesthetic
+   ========================================================================== */
+
+:root {
+  /* Warm Light Palette */
+  --bg-primary: #FAF9F5;
+  --bg-surface: #F5F3EC;
+  --bg-card: #FFFFFF;
+  --bg-composer: #FFFFFF;
+  --bg-subtle: #EFECE3;
+  --bg-hover: #ECE8DC;
+
+  /* Text Colors */
+  --text-primary: #1F1E1D;
+  --text-secondary: #57554F;
+  --text-muted: #87847C;
+  --text-inverse: #FAF9F5;
+
+  /* Borders & Dividers */
+  --border-light: #E8E6DC;
+  --border-medium: #DCD8CC;
+  --border-focus: #C96442;
+
+  /* Terracotta Accent */
+  --accent-primary: #C96442;
+  --accent-hover: #B85535;
+  --accent-subtle: #F6EAE4;
+  --accent-border: #E8B9A9;
+
+  /* Forensic Verdict Palette (Subdued, Informative) */
+  --verdict-authentic-bg: #EAF3EB;
+  --verdict-authentic-text: #215F29;
+  --verdict-authentic-border: #B7D9BA;
+
+  --verdict-suspicious-bg: #FCF4E9;
+  --verdict-suspicious-text: #965B0B;
+  --verdict-suspicious-border: #F3D2A2;
+
+  --verdict-tampered-bg: #FBEBEB;
+  --verdict-tampered-text: #A62828;
+  --verdict-tampered-border: #F3BBBB;
+
+  --verdict-inconclusive-bg: #F0EFEB;
+  --verdict-inconclusive-text: #595750;
+  --verdict-inconclusive-border: #D3D0C5;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(31, 30, 29, 0.04);
+  --shadow-md: 0 4px 12px rgba(31, 30, 29, 0.06), 0 1px 3px rgba(31, 30, 29, 0.04);
+  --shadow-lg: 0 12px 28px rgba(31, 30, 29, 0.08), 0 2px 6px rgba(31, 30, 29, 0.04);
+  --shadow-composer: 0 4px 20px rgba(31, 30, 29, 0.08), 0 0 1px rgba(31, 30, 29, 0.15);
+
+  /* Typography */
+  --font-serif: Charter, "Bitstream Charter", "Sitka Text", Cambria, Georgia, serif;
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+
+  /* Radii */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 22px;
+  --radius-full: 9999px;
+
+  /* Transitions */
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 220ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Layout dimensions */
+  --sidebar-width: 280px;
+  --header-height: 56px;
+  --content-max-width: 780px;
+}
+
+/* Dark Theme: Warm Charcoal with same terracotta accent */
+[data-theme="dark"] {
+  --bg-primary: #262624;
+  --bg-surface: #1E1E1C;
+  --bg-card: #2F2E2B;
+  --bg-composer: #2F2E2B;
+  --bg-subtle: #3A3935;
+  --bg-hover: #43413D;
+
+  --text-primary: #ECEBE4;
+  --text-secondary: #B0ADA4;
+  --text-muted: #85827A;
+  --text-inverse: #1F1E1D;
+
+  --border-light: #3A3935;
+  --border-medium: #4A4843;
+  --border-focus: #D97757;
+
+  --accent-primary: #D97757;
+  --accent-hover: #E38A6C;
+  --accent-subtle: #3B2A24;
+  --accent-border: #6B4234;
+
+  --verdict-authentic-bg: #1B2E1E;
+  --verdict-authentic-text: #7EC987;
+  --verdict-authentic-border: #2B4E30;
+
+  --verdict-suspicious-bg: #332612;
+  --verdict-suspicious-text: #F1BE6B;
+  --verdict-suspicious-border: #563E1B;
+
+  --verdict-tampered-bg: #351717;
+  --verdict-tampered-text: #F07E7E;
+  --verdict-tampered-border: #5C2727;
+
+  --verdict-inconclusive-bg: #302F2C;
+  --verdict-inconclusive-text: #C3C0B5;
+  --verdict-inconclusive-border: #484641;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.25);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.35);
+  --shadow-lg: 0 12px 28px rgba(0, 0, 0, 0.45);
+  --shadow-composer: 0 6px 24px rgba(0, 0, 0, 0.4), 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+/* Reduced Motion preference */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

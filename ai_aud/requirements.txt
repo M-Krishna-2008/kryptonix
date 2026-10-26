@@ -1,0 +1,30 @@
+# PS-05 Audio Forensics Requirements
+# Supported on Python 3.10 / 3.9 (64-bit)
+
+# Web & API
+fastapi>=0.109.0
+uvicorn[standard]>=0.27.0
+python-multipart>=0.0.9
+pydantic>=2.0.0
+pyyaml>=6.0
+
+# Scientific & Signal Processing
+numpy>=1.22.0,<2.0.0
+scipy>=1.10.0
+matplotlib>=3.7.0
+
+# Audio I/O & Decoding Fallbacks
+soundfile>=0.12.1
+librosa>=0.10.0
+av>=11.0.0
+mutagen>=1.47.0
+
+# PyTorch Deep Learning (CPU / CUDA compatible)
+torch>=2.0.0
+torchaudio>=2.0.0
+fairseq==0.12.2
+
+# Testing & Local Speech Synthesis
+pytest>=7.0.0
+httpx>=0.25.0
+pyttsx3>=2.90

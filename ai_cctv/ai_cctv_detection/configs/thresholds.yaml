@@ -1,0 +1,23 @@
+# Temporal Aggregation and Forensic Verdict Thresholds
+version: "1.0"
+
+frame_evaluation:
+  high_p_threshold: 0.70           # Threshold above which a frame is flagged as high AI probability
+
+aggregation:
+  min_usable_frames: 8             # Minimum kept frames required for conclusive verdict
+  min_quality_share: 0.30          # Minimum fraction of frames passing quality gate (else inconclusive)
+  high_confidence_quality: 0.70    # Quality threshold required for 'high' confidence rating
+
+verdict_rules:
+  likely_tampered_global:
+    min_median_p: 0.75
+    min_frac_high: 0.60
+  likely_tampered_splice:
+    min_run_high_sec: 3.0
+    min_frac_high: 0.25
+  authentic:
+    max_median_p: 0.30
+    max_frac_high: 0.10
+  suspicious:
+    median_p_range: [0.50, 0.75]

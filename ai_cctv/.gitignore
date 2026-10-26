@@ -1,0 +1,43 @@
+# Python & Bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyd
+
+# Virtual Environments
+.venv/
+env/
+venv/
+ENV/
+
+# Project Temp, Logs & Dynamic Caches
+logs/
+uploads/
+cache/
+artifacts/*
+!artifacts/.gitkeep
+runs/
+.pytest_cache/
+
+# Dataset storage (keep raw datasets out of git repo)
+data/
+data_raw/
+real/
+tamp/
+_backup/
+_archive_training_data/
+dist/
+baseline/
+
+# Operating System & IDE Files
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+
+# NEVER ignore model weights for this forensic module
+!models/
+!models/*.pt
+!ai_cctv_detection/models/
+!ai_cctv_detection/models/*.pt
