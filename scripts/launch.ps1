@@ -13,11 +13,15 @@ param (
     $ExtraArgs
 )
 
-# Parse /dryrun, /setup, /reset passed directly
-if ($ExtraArgs -match '(?i)dry[-]?run') { $DryRun = $true }
-if ($ExtraArgs -match '(?i)setup') { $Setup = $true }
-if ($ExtraArgs -match '(?i)reset') { $Reset = $true }
-if ($ExtraArgs -match '(?i)nobrowser') { $NoBrowser = $true }
+# Parse /dryrun, /setup, /reset, /nobrowser passed directly
+if ($ExtraArgs) {
+    foreach ($arg in $ExtraArgs) {
+        if ($arg -match '^[-/](?:dry[-]?run)$') { $DryRun = $true }
+        if ($arg -match '^[-/]setup$') { $Setup = $true }
+        if ($arg -match '^[-/]reset$') { $Reset = $true }
+        if ($arg -match '^[-/]nobrowser$') { $NoBrowser = $true }
+    }
+}
 
 $ErrorActionPreference = "Continue"
 $RootPath = (Resolve-Path "$PSScriptRoot\..").Path
