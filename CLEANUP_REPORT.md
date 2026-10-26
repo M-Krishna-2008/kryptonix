@@ -168,7 +168,8 @@ A complete simulation of a fresh clone on another PC was executed in a folder wi
    - **Result: 7 / 7 tests passed.**
 5. **Clean Shutdown (`stop.bat`):**
    - All background PIDs terminated and ports freed.
-6. **Second Launch:**
+6. **Second Launch & Double-Click Verification:**
+   - Fixed argument forwarding in `run.bat` to eliminate unwanted dry-run flag triggering when launched with no arguments (e.g. from Explorer double-click).
    - Skipped virtualenv creation, skipped model re-downloading, and started in seconds.
 
 ---
