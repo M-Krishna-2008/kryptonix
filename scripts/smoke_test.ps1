@@ -99,7 +99,10 @@ function Submit-ForensicFile {
 }
 
 # 3. Audio Module End-to-End Test
-$audioSample = Join-Path $RootPath "ai_aud\data_audio\bonafide\genuine_1.flac"
+$audioSample = Join-Path $RootPath "ai_aud\audio_forensics\tests\samples\real\sample_voice_real.wav"
+if (-not (Test-Path -LiteralPath $audioSample)) {
+    $audioSample = Join-Path $RootPath "ai_aud\data_audio\bonafide\genuine_1.flac"
+}
 if (Test-Path -LiteralPath $audioSample) {
     Assert-Test "Module [ai_aud] Audio Forensics Analysis" {
         $res = Submit-ForensicFile -ModuleId "ai_aud" -FilePath $audioSample
